@@ -54,7 +54,7 @@ export class Logic {
             this.locomotive.move(Direction.Forward);
         if (pressedKeys.has('ArrowLeft'))
             this.locomotive.move(Direction.Backwards);
-        if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowRight'))
+        if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft'))
             this.locomotive.move(Direction.Idle);
         this.locomotive.setGlobalOffset(this.offset);
     }

@@ -15,7 +15,7 @@ export class Locomotive {
     private velocity = 0;
 
     move(direction: Direction) {
-        if (Direction.Idle === direction) {
+        if (Direction.Idle == direction) {
             this.velocity *= 0.95;
         } else if (Math.abs(this.velocity) <= 0.002) {
             this.velocity += 0.00025 * direction;
