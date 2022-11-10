@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"module": "commonjs",
+		"target": "es6",
+		"allowJs": true,
+		"esModuleInterop": true
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		"jest.config.ts"
+	],
+	"files": [
+		"./src/js/app.ts",
+	],
+	"include": [
+		"src", "./assets/index.d.ts"
+	]
+}
+
