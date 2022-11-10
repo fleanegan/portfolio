@@ -24,8 +24,12 @@ export default class Game {
 		this.canvas.height = this.height;
 		this.ctx = this.canvas.getContext("2d");
 		this.addEventListeners();
-		this.logic = new Logic(this.canvas);
+		this.logic = new Logic(this.canvas, this.calcScalefactor());
 		let image = new Image();
+	}
+
+	private calcScalefactor() {
+		return this.canvas.width / 1200;
 	}
 
 	addEventListeners(): void {
@@ -50,8 +54,11 @@ export default class Game {
 			this.drawingState.pressedKeys.delete(e.key);
 		});
 		window.addEventListener('resize', () => {
+			console.log('new scalefactor: ' + this.calcScalefactor());
+
 			this.canvas.width = window.innerWidth
 			this.canvas.height = window.innerHeight
+			this.logic.zoom(this.calcScalefactor());
 		})
 	}
 

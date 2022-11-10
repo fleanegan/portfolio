@@ -25,8 +25,14 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
 export class Rails{
     interpolator: CurveInterpolator;
     curve: number[][];
+    scalefactor: number = 0;
 
-    constructor(points: number[][]) {
+    constructor(points: number[][], scalefactor: number) {
+        this.scalefactor = scalefactor;
+        points.forEach((point) => {
+            point[0] *= this.scalefactor;
+            point[1] *= this.scalefactor;
+        });
         this.interpolator = new CurveInterpolator(points, {tension: -.75});
         this.curve = this.interpolator.getPoints(this.interpolator.length);
     }
@@ -44,21 +50,25 @@ export class Rails{
     }
 
     public draw(context: CanvasRenderingContext2D): void{
-        let negativeOffset = generateOffsetCurveNegative(this.curve, 10);
-        let positiveOffset = generateOffsetCurvePositive(this.curve, 10);
+        let negativeOffset = generateOffsetCurveNegative(this.curve, 10 * this.scalefactor);
+        let positiveOffset = generateOffsetCurvePositive(this.curve, 10 * this.scalefactor);
 
         drawCurve(context, this.curve,
-            new LineStyle('#d4a373', 45, true, 2, '#B7BF9C', 5, 5));
+            new LineStyle('#d4a373', 45 * this.scalefactor, true, 2 * this.scalefactor, '#B7BF9C', 5 * this.scalefactor, 5 * this.scalefactor));
         for (let i: number = 1; i < negativeOffset.length; i++) {
-            if (i % 20 === 0){
+            if (i % (Math.floor(20 * this.scalefactor)) === 0){
                 drawCurve(context, [negativeOffset[i], positiveOffset[i]],
-                    new LineStyle('#faedcd', 10, true, 2, '#4a4e69', 1, 1));
+                    new LineStyle('#faedcd', 10 * this.scalefactor, true, 2 * this.scalefactor, '#4a4e69', 1 * this.scalefactor, 1 * this.scalefactor));
             }
         }
         drawCurve(context, negativeOffset,
-            new LineStyle('#432818', 5, true, 2, '#4a4e69', 1, 1));
+            new LineStyle('#432818', 5 * this.scalefactor, true, 2 * this.scalefactor, '#4a4e69', 1 * this.scalefactor, 1 * this.scalefactor));
         drawCurve(context, positiveOffset,
-            new LineStyle('#432818', 5, true, 2, '#4a4e69', 1, 1));
+            new LineStyle('#432818', 5 * this.scalefactor, true, 2 * this.scalefactor, '#4a4e69', 1 * this.scalefactor, 1 * this.scalefactor));
+    }
+
+    setScaleFactor(scalefactor: number) {
+        this.scalefactor = scalefactor;
     }
 }
 

@@ -7,11 +7,13 @@ export class Logic {
     private background: ImageData;
     private offset: Point;
     private locomotive: Locomotive;
+    private scalefactor: number;
 
 
-    constructor(private canvas: HTMLCanvasElement) {
-        this.rails = new Rails([[300, 300], [800, 700], [300, 1500], [1200, 1800], [2100, 300], [3000, 300]]);
-        this.locomotive = new Locomotive(this.rails, Math.round(window.screen.width * 0.075));
+    constructor(private canvas: HTMLCanvasElement, scalefactor: number) {
+        this.rails = new Rails([[300, 300], [800, 700], [300, 1500], [1200, 1800], [2100, 300], [3000, 300]], scalefactor);
+        this.locomotive = new Locomotive(this.rails,175, scalefactor);
+        this.scalefactor = scalefactor;
         this.generateStaticBackground();
         this.offset = new Point(0, 0);
     }
@@ -24,6 +26,7 @@ export class Logic {
         canvas.height = window.screen.height * 5;
         drawBackground(ctx, canvas);
         ctx.translate(window.screen.width, window.screen.height);
+        this.rails.setScaleFactor(this.scalefactor);
         this.rails.draw(ctx);
         ctx.translate(-window.screen.width, -window.screen.height);
         this.background = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -62,5 +65,12 @@ export class Logic {
     process(context: CanvasRenderingContext2D) {
         context.putImageData(this.getBackground(), this.getOffset().x - window.screen.width, this.getOffset().y - window.screen.height);
         this.locomotive.draw(context);
+    }
+
+    zoom(newScalefactor: number) {
+        this.scalefactor = newScalefactor;
+        this.rails.setScaleFactor(newScalefactor);
+        this.locomotive.scaleLength(newScalefactor);
+        this.generateStaticBackground();
     }
 }
