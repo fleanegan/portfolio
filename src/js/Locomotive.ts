@@ -59,7 +59,7 @@ export class Locomotive {
         let frontWheels = Point.fromArr(this.rails.curve[indexOfRearWheels]);
 
         function indexOfFrontWheelsForStraightLine() {
-            return this.rails.pxToNormalized(this.length) * this.rails.interpolator.length * 0.6;
+            return Math.round(this.rails.pxToNormalized(this.length) * this.rails.interpolator.length * 0.6);
         }
 
         let i: number = indexOfFrontWheelsForStraightLine.call(this) ;

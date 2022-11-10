@@ -19,6 +19,8 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     context.fillStyle = '#ccd5ae'
     context.beginPath();
     context.fillRect(0, 0, canvas.width + window.screen.width, canvas.height + window.screen.height);
+    context.font = "60px Arial";
+    //context.fillText("C++", 700, 700);
     context.stroke();
 }
 
