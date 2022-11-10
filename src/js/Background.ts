@@ -14,14 +14,32 @@ class LineStyle {
     }
 }
 
+export function drawTile(context: CanvasRenderingContext2D, x: number, y: number, title: string) {
+    context.beginPath();
+    context.fillStyle = '#ffffff'
+    context.strokeStyle = '#ffffff'
+    context.lineWidth = 4;
+    context.font = "60px Arial";
+    context.fillText(title, x + window.screen.width, y - 115 + window.screen.height);
+    context.font = "30px Arial";
+    context.fillText("link zu coolem git repo 1", x + window.screen.width, y + window.screen.height);
+    context.fillText("link zu coolem git repo 2", x + window.screen.width, y + 45 + window.screen.height);
+    context.strokeRect(x - 200 + 202 + window.screen.width, y + 425 - 525 + window.screen.height, 325, 2);
+    context.shadowBlur = 5;
+    context.shadowColor = '#ffffff';
+    context.shadowOffsetY = 2;
+    context.shadowOffsetX = 2;
+    context.strokeRect(x - 200 + 175 + window.screen.width, y + 425 - 600 + window.screen.height, 390, 250);
+    context.stroke();
+}
 
 export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     context.fillStyle = '#ccd5ae'
     context.beginPath();
     context.fillRect(0, 0, canvas.width + window.screen.width, canvas.height + window.screen.height);
-    context.font = "60px Arial";
-    //context.fillText("C++", 700, 700);
     context.stroke();
+    drawTile(context, 600, 1200, "C++");
+    drawTile(context, 1300, 1800, "Python");
 }
 
 export class Rails{

@@ -20,16 +20,16 @@ export class Logic {
 
     private generateStaticBackground(): void {
         let canvas = document.createElement('canvas')
-        let ctx = canvas.getContext('2d');
+        let context = canvas.getContext('2d');
 
         canvas.width = window.screen.width * 5;
         canvas.height = window.screen.height * 5;
-        drawBackground(ctx, canvas);
-        ctx.translate(window.screen.width, window.screen.height);
+        drawBackground(context, canvas);
+        context.translate(window.screen.width, window.screen.height);
         this.rails.setScaleFactor(this.scalefactor);
-        this.rails.draw(ctx);
-        ctx.translate(-window.screen.width, -window.screen.height);
-        this.background = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        this.rails.draw(context);
+        context.translate(-window.screen.width, -window.screen.height);
+        this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
 
     getBackground(): ImageData {
