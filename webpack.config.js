@@ -4,7 +4,7 @@ module.exports = {
     mode: 'production', //add this line here
     entry: './src/js/app.ts',
     output: {
-        path: __dirname + "dist",
+        path: __dirname + "/dist",
         filename: "bundle.js",
     },
     resolve: {

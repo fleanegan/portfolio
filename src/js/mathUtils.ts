@@ -7,6 +7,10 @@ export class Point {
         return new Point(input[0], input[1]);
     }
 
+    toArr(): number[]{
+        return [this.x, this.y];
+    }
+
     distanceTo(other: Point) {
         let y = this.y - other.y;
         let x = this.x - other.x;
