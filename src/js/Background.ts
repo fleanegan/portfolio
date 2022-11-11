@@ -15,8 +15,7 @@ class LineStyle {
     }
 }
 
-export class DragItem {
-    radius: number = 32;
+class Item {
     unScaledCenter: Point;
 
     constructor(public center: Point) {
@@ -35,6 +34,14 @@ export class DragItem {
         this.center.x = Scaler.x(this.unScaledCenter.x);
         this.center.y = Scaler.y(this.unScaledCenter.y);
     }
+}
+
+export class DragItem extends Item {
+    radius: number = 32;
+
+    constructor(center: Point) {
+        super(center);
+    }
 
     draw(context: CanvasRenderingContext2D) {
         const radius = this.radius;
@@ -50,23 +57,30 @@ export class DragItem {
     }
 }
 
-export function drawTile(context: CanvasRenderingContext2D, x: number, y: number, title: string) {
-    context.beginPath();
-    context.fillStyle = '#ffffff'
-    context.strokeStyle = '#ffffff'
-    context.lineWidth = 4;
-    context.font = "60px Arial";
-    context.fillText(title, x, y - 115);
-    context.font = "30px Arial";
-    context.fillText("link zu coolem git repo 1", x, y);
-    context.fillText("link zu coolem git repo 2", x, y + 45);
-    context.strokeRect(x - 200 + 202, y + 425 - 525, 325, 2);
-    context.shadowBlur = 5;
-    context.shadowColor = '#ffffff';
-    context.shadowOffsetY = 2;
-    context.shadowOffsetX = 2;
-    context.strokeRect(x - 200 + 175, y + 425 - 600, 390, 250);
-    context.stroke();
+export class ContentTile extends Item{
+    constructor(private upperLeft: Point, private title: string) {
+        super(upperLeft);
+        // this.dragTarget =
+    }
+
+    drawTile(context: CanvasRenderingContext2D) {
+        // context.beginPath();
+        // context.fillStyle = '#ffffff'
+        // context.strokeStyle = '#ffffff'
+        // context.lineWidth = 4;
+        // context.font = "60px Arial";
+        // context.fillText(this.title, this.center.x, this.center.y - 115);
+        // context.font = "30px Arial";
+        // context.fillText("link zu coolem git repo 1", this.center.x, this.center.y);
+        // context.fillText("link zu coolem git repo 2", this.center.x, this.center.y + 45);
+        // context.strokeRect(this.center.x - 200 + 202, this.center.y + 425 - 525, 325, 2);
+        // context.shadowBlur = 5;
+        // context.shadowColor = '#ffffff';
+        // context.shadowOffsetY = 2;
+        // context.shadowOffsetX = 2;
+        // context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, 390, 250);
+        // context.stroke();
+    }
 }
 
 export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -74,7 +88,6 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     context.beginPath();
     context.fillRect(0, 0, canvas.width + window.screen.width, canvas.height + window.screen.height);
     context.stroke();
-    drawTile(context, 300, 300, "C++");
 }
 
 export class Rails {
@@ -83,6 +96,7 @@ export class Rails {
     private splineBasePoints: DragItem[] = [];
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
+    private target: ContentTile;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -91,6 +105,7 @@ export class Rails {
             this.splineBasePoints.push(new DragItem(new Point(x, y)));
         });
         this.interpolate();
+        this.target = new ContentTile(new Point(300, 300), "This Is Test");
     }
 
     private interpolate() {
@@ -150,6 +165,7 @@ export class Rails {
         drawCurve(context, positiveOffset,
             new LineStyle('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
         this.shouldRedrawRails = false;
+        this.target.drawTile(context);
     }
 
     updateZoom() {
