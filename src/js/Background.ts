@@ -15,6 +15,7 @@ class LineStyle {
 }
 
 export class DragItem {
+    radius: number = 32;
 
     constructor(public center: Point,
                 private scalefactor: number) {
@@ -25,7 +26,7 @@ export class DragItem {
     }
 
     draw(context: CanvasRenderingContext2D) {
-        const radius = 32 * this.scalefactor;
+        const radius = this.radius * this.scalefactor;
         context.beginPath();
         context.globalAlpha = 0.5;
         context.arc(this.center.x * this.scalefactor, this.center.y * this.scalefactor, radius, 0, 2 * Math.PI, false);
@@ -168,8 +169,15 @@ export class Rails {
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
-        if (this.activeDragPoint.length == 1)
+        if (this.activeDragPoint.length == 1){
+            for (const splineBasePoint of this.splineBasePoints) {
+                const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
+                const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
+                if (oldDistance > 0 && newDistance < this.activeDragPoint[0].radius * 2.5)
+                    return;
+            }
             this.activeDragPoint[0].center = pointerPosition;
+        }
     }
 
     isBeingDragged() {
