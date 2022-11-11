@@ -14,7 +14,7 @@ export class Logic {
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D, scalefactor: number) {
         this.railTargetPoints = [[300, 300], [1000, 300], [1000, 800], [2000, 800], [2200, 300]];
         this.rails = new Rails(this.railTargetPoints, scalefactor);
-        this.dragItems.push(new DragItem(new Point(this.railTargetPoints[0][0], this.railTargetPoints[0][1]), this.canvas));
+        this.dragItems.push(new DragItem(new Point(this.railTargetPoints[0][0], this.railTargetPoints[0][1]),1, this.canvas));
         this.locomotive = new Locomotive(this.rails,175, scalefactor);
         this.scalefactor = scalefactor;
         this.generateStaticBackground();
@@ -62,6 +62,9 @@ export class Logic {
         this.scalefactor = newScalefactor;
         this.rails.setScaleFactor(newScalefactor);
         this.locomotive.scaleLength(newScalefactor);
+        this.dragItems.forEach((item) => {
+            item.setScaleFactor(newScalefactor);
+        });
         this.generateStaticBackground();
     }
 

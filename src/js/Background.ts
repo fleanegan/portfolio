@@ -17,18 +17,23 @@ class LineStyle {
 export class DragItem {
 
     constructor(public center: Point,
+                private scalefactor: number,
                 private canvas: HTMLCanvasElement) {
     }
 
-    draw(context: CanvasRenderingContext2D){
-        const radius = 70;
+    draw(context: CanvasRenderingContext2D) {
+        const radius = 32 * this.scalefactor;
         context.beginPath();
-        context.arc(this.center.x, this.center.y, radius, 0, 2 * Math.PI, false);
+        context.arc(this.center.x * this.scalefactor, this.center.y * this.scalefactor, radius, 0, 2 * Math.PI, false);
         context.fillStyle = 'green';
         context.fill();
         context.lineWidth = 5;
         context.strokeStyle = '#003300';
         context.stroke();
+    }
+
+    setScaleFactor(newScalefactor: number) {
+        this.scalefactor = newScalefactor;
     }
 }
 
@@ -60,7 +65,7 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     drawTile(context, 1300, 1800, "Python");
 }
 
-export class Rails{
+export class Rails {
     interpolator: CurveInterpolator;
     curve: number[][];
     scalefactor: number = 0;
@@ -76,11 +81,11 @@ export class Rails{
         this.curve = this.interpolator.getPoints(this.interpolator.length);
     }
 
-    pxToNormalized(px: number): number{
+    pxToNormalized(px: number): number {
         return px / this.interpolator.length;
     }
 
-    public getInterpolatedTrainPosition(normalizedInput: number): Point{
+    public getInterpolatedTrainPosition(normalizedInput: number): Point {
         if (normalizedInput < 0 || normalizedInput > 1)
             throw new Error("input from zero to one expected")
         let tmp = this.interpolator.getPointAt(normalizedInput) as number[];
@@ -88,14 +93,14 @@ export class Rails{
         return new Point(tmp[0], tmp[1]);
     }
 
-    public draw(context: CanvasRenderingContext2D): void{
+    public draw(context: CanvasRenderingContext2D): void {
         let negativeOffset = generateOffsetCurveNegative(this.curve, 10 * this.scalefactor);
         let positiveOffset = generateOffsetCurvePositive(this.curve, 10 * this.scalefactor);
 
         drawCurve(context, this.curve,
             new LineStyle('#d4a373', 45 * this.scalefactor, true, 2 * this.scalefactor, '#B7BF9C', 5 * this.scalefactor, 5 * this.scalefactor));
         for (let i: number = 1; i < negativeOffset.length; i++) {
-            if (i % (Math.floor(20 * this.scalefactor)) === 0){
+            if (i % (Math.floor(20 * this.scalefactor)) === 0) {
                 drawCurve(context, [negativeOffset[i], positiveOffset[i]],
                     new LineStyle('#faedcd', 10 * this.scalefactor, true, 2 * this.scalefactor, '#4a4e69', 1 * this.scalefactor, 1 * this.scalefactor));
             }

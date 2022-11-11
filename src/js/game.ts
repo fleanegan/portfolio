@@ -30,7 +30,7 @@ export default class Game {
     }
 
     private calcScalefactor() {
-        return 1.;
+        return 1;
     }
 
     addEventListeners(): void {
