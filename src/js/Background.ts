@@ -56,16 +56,16 @@ export function drawTile(context: CanvasRenderingContext2D, x: number, y: number
     context.strokeStyle = '#ffffff'
     context.lineWidth = 4;
     context.font = "60px Arial";
-    context.fillText(title, x + window.screen.width, y - 115 + window.screen.height);
+    context.fillText(title, x, y - 115);
     context.font = "30px Arial";
-    context.fillText("link zu coolem git repo 1", x + window.screen.width, y + window.screen.height);
-    context.fillText("link zu coolem git repo 2", x + window.screen.width, y + 45 + window.screen.height);
-    context.strokeRect(x - 200 + 202 + window.screen.width, y + 425 - 525 + window.screen.height, 325, 2);
+    context.fillText("link zu coolem git repo 1", x, y);
+    context.fillText("link zu coolem git repo 2", x, y + 45);
+    context.strokeRect(x - 200 + 202, y + 425 - 525, 325, 2);
     context.shadowBlur = 5;
     context.shadowColor = '#ffffff';
     context.shadowOffsetY = 2;
     context.shadowOffsetX = 2;
-    context.strokeRect(x - 200 + 175 + window.screen.width, y + 425 - 600 + window.screen.height, 390, 250);
+    context.strokeRect(x - 200 + 175, y + 425 - 600, 390, 250);
     context.stroke();
 }
 
@@ -75,7 +75,6 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     context.fillRect(0, 0, canvas.width + window.screen.width, canvas.height + window.screen.height);
     context.stroke();
     drawTile(context, 300, 300, "C++");
-    drawTile(context, 1300, 1800, "Python");
 }
 
 export class Rails {
@@ -84,7 +83,6 @@ export class Rails {
     private splineBasePoints: DragItem[] = [];
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
-    private shouldRedrawDragPoints: boolean = false;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -128,7 +126,7 @@ export class Rails {
     public draw(context: CanvasRenderingContext2D): void {
         if (this.shouldRedrawRails)
             this.drawRails(context);
-        if (this.shouldRedrawDragPoints)
+        if (this.isBeingDragged())
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);
             });
@@ -165,7 +163,6 @@ export class Rails {
         for (let dragItem of this.splineBasePoints) {
             if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius) {
                 this.activeDragPoint.push(dragItem);
-                this.shouldRedrawDragPoints = true;
             }
         }
     }
@@ -174,7 +171,6 @@ export class Rails {
         if (this.isBeingDragged()) {
             this.interpolate();
             this.activeDragPoint.pop();
-            this.shouldRedrawDragPoints = false;
         }
     }
 
