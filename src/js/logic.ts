@@ -23,7 +23,7 @@ export class Logic {
         canvas.height = window.screen.height;
         drawBackground(context, canvas);
         this.rails.setScaleFactor(this.scalefactor);
-        this.rails.draw(context);
+        this.rails.reDraw(context);
         this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
 

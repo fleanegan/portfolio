@@ -110,6 +110,11 @@ export class Rails {
         return new Point(tmp[0], tmp[1]);
     }
 
+    public reDraw(context: CanvasRenderingContext2D): void {
+        this.isAwaitingRedraw = true;
+        this.draw(context);
+    }
+
     public draw(context: CanvasRenderingContext2D): void {
         if (this.isAwaitingRedraw)
             this.drawRails(context);
@@ -149,7 +154,7 @@ export class Rails {
             if (dragItem.center.distanceTo(pointerPosition) < 70)
             {
                 this.activeDragPoint.push(dragItem);
-                // new DragItem(dragItem.center, this.scaleFactor).
+                // this.activeDragPoint. todo: fill when dragged, overwrite when released
             }
         }
     }
