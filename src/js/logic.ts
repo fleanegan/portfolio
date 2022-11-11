@@ -1,6 +1,7 @@
 import {DragItem, drawBackground, Rails} from "./Background";
 import {Direction, Locomotive} from "./Locomotive";
 import {Point} from "./mathUtils";
+import {Scaler} from "./utils";
 
 export class Logic {
     private rails: Rails;
@@ -8,10 +9,9 @@ export class Logic {
     private locomotive: Locomotive;
     private scalefactor: number;
 
-    constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D, scalefactor: number) {
-        this.rails = new Rails([[300, 300], [1000, 300], [1000, 800], [2000, 800], [2200, 300]], scalefactor);
-        this.locomotive = new Locomotive(this.rails,175, scalefactor);
-        this.scalefactor = scalefactor;
+    constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
+        this.rails = new Rails([[300, 300], [1000, 300], [1000, 800], [1500, 800], [1500, 300]]);
+        this.locomotive = new Locomotive(this.rails, Scaler.x(175));
         this.generateStaticBackground();
     }
 
@@ -22,7 +22,7 @@ export class Logic {
         canvas.width = window.screen.width;
         canvas.height = window.screen.height;
         drawBackground(context, canvas);
-        this.rails.setScaleFactor(this.scalefactor);
+        this.rails.updateZoom();
         this.rails.reDraw(context);
         this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
@@ -31,7 +31,7 @@ export class Logic {
         return this.background;
     }
 
-    updateOffset(pressedKeys: Set<string>) {
+    updateLocomotivePosition(pressedKeys: Set<string>) {
         let currentLocomotivePosition = this.locomotive.getPositionOnScreen();
         if (pressedKeys.has('ArrowRight'))
             this.locomotive.move(Direction.Forward);
@@ -48,10 +48,9 @@ export class Logic {
         this.rails.draw(this.context);
     }
 
-    zoom(newScalefactor: number) {
-        this.scalefactor = newScalefactor;
-        this.rails.setScaleFactor(newScalefactor);
-        this.locomotive.scaleLength(newScalefactor);
+    zoom() {
+        this.rails.updateZoom();
+        this.locomotive.scaleLength(Scaler.x(1));
         this.generateStaticBackground();
     }
 
@@ -60,7 +59,7 @@ export class Logic {
     }
 
     handlePointerUp(pointerPosition: Point) {
-        if (this.rails.isBeingDragged()){
+        if (this.rails.isBeingDragged()) {
             this.rails.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }

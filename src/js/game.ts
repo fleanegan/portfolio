@@ -25,25 +25,18 @@ export default class Game {
         this.canvas.height = this.height;
         this.context = this.canvas.getContext("2d");
         this.addEventListeners();
-        this.logic = new Logic(this.canvas, this.context, this.calcScalefactor());
-        let image = new Image();
-    }
-
-    private calcScalefactor() {
-        return 1;
+        this.logic = new Logic(this.canvas, this.context);
     }
 
     addEventListeners(): void {
         this.canvas.addEventListener('pointerdown', () => {
             this.drawingState.isPointerDown = true;
             this.logic.handlePointerDown(new Point(this.drawingState.pointerPosition.x, this.drawingState.pointerPosition.y));
-            console.log("down");
         });
 
         this.canvas.addEventListener('pointerup', () => {
             this.drawingState.isPointerDown = false;
             this.logic.handlePointerUp(new Point(this.drawingState.pointerPosition.x, this.drawingState.pointerPosition.y));
-            console.log("up");
         });
 
         this.canvas.addEventListener('pointermove', (e) => {
@@ -61,15 +54,14 @@ export default class Game {
             this.drawingState.pressedKeys.delete(e.key);
         });
         window.addEventListener('resize', () => {
-            console.log('new scalefactor: ' + this.calcScalefactor());
             this.canvas.width = window.innerWidth
             this.canvas.height = window.innerHeight
-            this.logic.zoom(this.calcScalefactor());
+            this.logic.zoom();
         })
     }
 
     public render(): void {
-        this.logic.updateOffset(this.drawingState.pressedKeys);
+        this.logic.updateLocomotivePosition(this.drawingState.pressedKeys);
         this.logic.process();
     }
 

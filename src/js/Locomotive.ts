@@ -1,6 +1,7 @@
 import {Rails} from "./Background";
 import {getIndexOfClosestValue, Point} from "./mathUtils";
 import icon from '../../assets/locomotive.png'
+import {Scaler} from "./utils";
 
 export enum Direction {
     Forward = 1,
@@ -24,7 +25,7 @@ export class Locomotive {
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
     }
 
-    constructor(public rails: Rails, private length: number, scalefactor: number) {
+    constructor(public rails: Rails, private length: number) {
         this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
