@@ -14,6 +14,24 @@ class LineStyle {
     }
 }
 
+export class DragItem {
+
+    constructor(public center: Point,
+                private canvas: HTMLCanvasElement) {
+    }
+
+    draw(context: CanvasRenderingContext2D){
+        const radius = 70;
+        context.beginPath();
+        context.arc(this.center.x, this.center.y, radius, 0, 2 * Math.PI, false);
+        context.fillStyle = 'green';
+        context.fill();
+        context.lineWidth = 5;
+        context.strokeStyle = '#003300';
+        context.stroke();
+    }
+}
+
 export function drawTile(context: CanvasRenderingContext2D, x: number, y: number, title: string) {
     context.beginPath();
     context.fillStyle = '#ffffff'
@@ -48,12 +66,13 @@ export class Rails{
     scalefactor: number = 0;
 
     constructor(points: number[][], scalefactor: number) {
+        let tmp = JSON.parse(JSON.stringify(points)) as number[][];
         this.scalefactor = scalefactor;
-        points.forEach((point) => {
+        tmp.forEach((point) => {
             point[0] *= this.scalefactor;
             point[1] *= this.scalefactor;
         });
-        this.interpolator = new CurveInterpolator(points, {tension: -.75});
+        this.interpolator = new CurveInterpolator(tmp, {tension: -.75});
         this.curve = this.interpolator.getPoints(this.interpolator.length);
     }
 

@@ -24,7 +24,7 @@ export class Locomotive {
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
     }
 
-    constructor(private rails: Rails, private length: number, scalefactor: number) {
+    constructor(public rails: Rails, private length: number, scalefactor: number) {
         this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
