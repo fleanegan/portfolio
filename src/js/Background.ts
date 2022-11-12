@@ -3,10 +3,9 @@ import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from ".
 import {Scaler} from "./utils";
 
 class Style {
-    fillColor: string = '#ffffff';
-
     constructor(
         public strokeColor: string,
+        public fillColor: string,
         public lineWidth: number,
         public hasShadow: boolean,
         public shadowBlur?: number,
@@ -38,11 +37,17 @@ class Item {
     }
 }
 
+enum HighlightMode {
+    None,
+    Light,
+    Full
+}
+
 export class DragItem extends Item {
     radius: number = 32;
-    public isHightlighted: boolean = false;
+    public isHightlighted: HighlightMode = HighlightMode.None;
 
-    constructor(center: Point, private normalStyle: Style, private hightlightStyle?: Style) {
+    constructor(center: Point, private normalStyle: Style, private hightlightStyle?: Style, private highlightStyle2?: Style) {
         super(center);
     }
 
@@ -62,8 +67,10 @@ export class DragItem extends Item {
     }
 
     private getStyle(): Style {
-        if (this.isHightlighted)
+        if (this.isHightlighted == HighlightMode.Light)
             return this.hightlightStyle;
+        else if (this.isHightlighted == HighlightMode.Full)
+            return this.highlightStyle2;
         return this.normalStyle;
     }
 }
@@ -74,14 +81,22 @@ export class ContentTile extends Item {
     constructor(private upperLeft: Point, private title: string) {
         super(upperLeft);
         let relativeDragTargetPosition = new Point(upperLeft.x + 300, upperLeft.y + 125);
-        this.dragTarget = new DragItem(relativeDragTargetPosition, new Style('#ffffff', 5, false), new Style('#ff0000', 5, false));
+        this.dragTarget = new DragItem(relativeDragTargetPosition,
+            new Style('#ffffff','#ffffff', 5, false),
+            new Style('#ff0000', '#ffffff',5, false),
+            new Style('#ff0000', '#ff0000',5, true, 10, '#ff0000', 0, 0));
     }
 
-    setHightlightMode(targetMode: boolean) {
+    setHightlightMode(targetMode: HighlightMode) {
         this.dragTarget.isHightlighted = targetMode;
     }
 
+    getDragTargetCenter(): Point{
+        return this.dragTarget.center;
+    }
+
     draw(context: CanvasRenderingContext2D) {
+        this.dragTarget.draw(context);
         context.beginPath();
         context.fillStyle = '#ffffff';
         context.strokeStyle = '#ffffff';
@@ -98,7 +113,7 @@ export class ContentTile extends Item {
         context.shadowOffsetX = 2;
         context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, 390, 350);
         context.stroke();
-        this.dragTarget.draw(context);
+
     }
 }
 
@@ -115,16 +130,16 @@ export class Rails {
     private splineBasePoints: DragItem[] = [];
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
-    private target: ContentTile;
+    private targets: ContentTile[];
 
     constructor(points: number[][]) {
         points.forEach((point) => {
             const x = point[0];
             const y = point[1];
-            this.splineBasePoints.push(new DragItem(new Point(x, y), new Style('#ffffff', 5, false)));
+            this.splineBasePoints.push(new DragItem(new Point(x, y), new Style('#ffffff', '#ffffff', 5, false)));
         });
         this.interpolate();
-        this.target = new ContentTile(new Point(125, 800), "This Is Test");
+        this.targets = [new ContentTile(new Point(125, 800), "This Is Test")];
     }
 
     private interpolate() {
@@ -161,9 +176,11 @@ export class Rails {
         if (this.shouldRedrawRails)
             this.drawRails(context);
         if (this.isBeingDragged()) {
-            this.target.draw(context);
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);
+            });
+            this.targets.forEach((target) => {
+                target.draw(context);
             });
         }
     }
@@ -174,26 +191,30 @@ export class Rails {
         let positiveOffset = generateOffsetCurvePositive(this.curve, 10 * scaleFactor);
 
         drawCurve(context, this.curve,
-            new Style('#d4a373', 45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
+            new Style('#d4a373','#ffffff',  45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
         for (let i: number = 1; i < negativeOffset.length; i++) {
             if (i % (Math.floor(20 * scaleFactor)) === 0) {
                 drawCurve(context, [negativeOffset[i], positiveOffset[i]],
-                    new Style('#faedcd', 10 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+                    new Style('#faedcd', '#ffffff', 10 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
             }
         }
         drawCurve(context, negativeOffset,
-            new Style('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            new Style('#432818', '#ffffff', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
         drawCurve(context, positiveOffset,
-            new Style('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            new Style('#432818', '#ffffff', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
         this.shouldRedrawRails = false;
-        this.target.draw(context);
+        this.targets.forEach((target) => {
+            target.draw(context);
+        });
     }
 
     updateZoom() {
         this.splineBasePoints.forEach((item) => {
             item.updateZoom();
         });
-        this.target.updateZoom();
+        this.targets.forEach((target) => {
+            target.updateZoom();
+        })
         this.interpolate();
     }
 
@@ -201,7 +222,9 @@ export class Rails {
         for (let dragItem of this.splineBasePoints) {
             if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius) {
                 this.activeDragPoint.push(dragItem);
-                this.target.setHightlightMode(true);
+                this.targets.forEach((target) =>{
+                  target.setHightlightMode(HighlightMode.Light);
+                })
             }
         }
     }
@@ -210,7 +233,9 @@ export class Rails {
         if (this.isBeingDragged()) {
             this.interpolate();
             this.activeDragPoint.pop();
-            this.target.setHightlightMode(false);
+            this.targets.forEach((target) =>{
+                target.setHightlightMode(HighlightMode.None);
+            })
         }
     }
 
@@ -222,6 +247,17 @@ export class Rails {
                 if (oldDistance > 0 && newDistance < this.activeDragPoint[0].radius * 2.5)
                     return;
             }
+            for (const target of this.targets) {
+                const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
+                if (distance < this.activeDragPoint[0].radius * 2){
+                    this.activeDragPoint[0].setCenter(target.getDragTargetCenter());
+                    target.setHightlightMode(HighlightMode.Full);
+                    return;
+                }
+                else
+                    target.setHightlightMode(HighlightMode.Light);
+            }
+
             this.activeDragPoint[0].setCenter(pointerPosition);
         }
     }
