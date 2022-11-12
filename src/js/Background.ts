@@ -2,9 +2,11 @@ import {CurveInterpolator} from 'curve-interpolator';
 import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from "./mathUtils";
 import {Scaler} from "./utils";
 
-class LineStyle {
+class Style {
+    fillColor: string = '#ffffff';
+
     constructor(
-        public strokeStype: string,
+        public strokeColor: string,
         public lineWidth: number,
         public hasShadow: boolean,
         public shadowBlur?: number,
@@ -38,48 +40,65 @@ class Item {
 
 export class DragItem extends Item {
     radius: number = 32;
+    public isHightlighted: boolean = false;
 
-    constructor(center: Point) {
+    constructor(center: Point, private normalStyle: Style, private hightlightStyle?: Style) {
         super(center);
     }
 
     draw(context: CanvasRenderingContext2D) {
         const radius = this.radius;
+        const style = this.getStyle();
+
         context.beginPath();
         context.globalAlpha = 0.5;
         context.arc(this.center.x, this.center.y, radius, 0, 2 * Math.PI, false);
-        context.fillStyle = 'white';
+        context.fillStyle = style.fillColor;
         context.fill();
-        context.lineWidth = 5;
+        context.lineWidth = style.lineWidth;
         context.globalAlpha = 1;
-        context.strokeStyle = '#003300';
+        context.strokeStyle = style.strokeColor;
         context.stroke();
+    }
+
+    private getStyle(): Style {
+        if (this.isHightlighted)
+            return this.hightlightStyle;
+        return this.normalStyle;
     }
 }
 
-export class ContentTile extends Item{
+export class ContentTile extends Item {
+    private dragTarget: DragItem;
+
     constructor(private upperLeft: Point, private title: string) {
         super(upperLeft);
-        // this.dragTarget =
+        let relativeDragTargetPosition = new Point(upperLeft.x + 300, upperLeft.y + 125);
+        this.dragTarget = new DragItem(relativeDragTargetPosition, new Style('#ffffff', 5, false), new Style('#ff0000', 5, false));
     }
 
-    drawTile(context: CanvasRenderingContext2D) {
-        // context.beginPath();
-        // context.fillStyle = '#ffffff'
-        // context.strokeStyle = '#ffffff'
-        // context.lineWidth = 4;
-        // context.font = "60px Arial";
-        // context.fillText(this.title, this.center.x, this.center.y - 115);
-        // context.font = "30px Arial";
-        // context.fillText("link zu coolem git repo 1", this.center.x, this.center.y);
-        // context.fillText("link zu coolem git repo 2", this.center.x, this.center.y + 45);
-        // context.strokeRect(this.center.x - 200 + 202, this.center.y + 425 - 525, 325, 2);
-        // context.shadowBlur = 5;
-        // context.shadowColor = '#ffffff';
-        // context.shadowOffsetY = 2;
-        // context.shadowOffsetX = 2;
-        // context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, 390, 250);
-        // context.stroke();
+    setHightlightMode(targetMode: boolean) {
+        this.dragTarget.isHightlighted = targetMode;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+        context.beginPath();
+        context.fillStyle = '#ffffff';
+        context.strokeStyle = '#ffffff';
+        context.lineWidth = 4;
+        context.font = "60px Arial";
+        context.fillText(this.title, this.center.x, this.center.y - 115);
+        context.font = "30px Arial";
+        context.fillText("link zu coolem git repo 1", this.center.x, this.center.y);
+        context.fillText("link zu coolem git repo 2", this.center.x, this.center.y + 45);
+        context.strokeRect(this.center.x - 200 + 202, this.center.y + 425 - 525, 325, 2);
+        context.shadowBlur = 5;
+        context.shadowColor = '#ffffff';
+        context.shadowOffsetY = 2;
+        context.shadowOffsetX = 2;
+        context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, 390, 350);
+        context.stroke();
+        this.dragTarget.draw(context);
     }
 }
 
@@ -102,10 +121,10 @@ export class Rails {
         points.forEach((point) => {
             const x = point[0];
             const y = point[1];
-            this.splineBasePoints.push(new DragItem(new Point(x, y)));
+            this.splineBasePoints.push(new DragItem(new Point(x, y), new Style('#ffffff', 5, false)));
         });
         this.interpolate();
-        this.target = new ContentTile(new Point(300, 300), "This Is Test");
+        this.target = new ContentTile(new Point(125, 800), "This Is Test");
     }
 
     private interpolate() {
@@ -141,10 +160,12 @@ export class Rails {
     public draw(context: CanvasRenderingContext2D): void {
         if (this.shouldRedrawRails)
             this.drawRails(context);
-        if (this.isBeingDragged())
+        if (this.isBeingDragged()) {
+            this.target.draw(context);
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);
             });
+        }
     }
 
     private drawRails(context: CanvasRenderingContext2D) {
@@ -153,25 +174,26 @@ export class Rails {
         let positiveOffset = generateOffsetCurvePositive(this.curve, 10 * scaleFactor);
 
         drawCurve(context, this.curve,
-            new LineStyle('#d4a373', 45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
+            new Style('#d4a373', 45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
         for (let i: number = 1; i < negativeOffset.length; i++) {
             if (i % (Math.floor(20 * scaleFactor)) === 0) {
                 drawCurve(context, [negativeOffset[i], positiveOffset[i]],
-                    new LineStyle('#faedcd', 10 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+                    new Style('#faedcd', 10 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
             }
         }
         drawCurve(context, negativeOffset,
-            new LineStyle('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            new Style('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
         drawCurve(context, positiveOffset,
-            new LineStyle('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            new Style('#432818', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
         this.shouldRedrawRails = false;
-        this.target.drawTile(context);
+        this.target.draw(context);
     }
 
     updateZoom() {
         this.splineBasePoints.forEach((item) => {
             item.updateZoom();
         });
+        this.target.updateZoom();
         this.interpolate();
     }
 
@@ -179,6 +201,7 @@ export class Rails {
         for (let dragItem of this.splineBasePoints) {
             if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius) {
                 this.activeDragPoint.push(dragItem);
+                this.target.setHightlightMode(true);
             }
         }
     }
@@ -187,6 +210,7 @@ export class Rails {
         if (this.isBeingDragged()) {
             this.interpolate();
             this.activeDragPoint.pop();
+            this.target.setHightlightMode(false);
         }
     }
 
@@ -207,7 +231,7 @@ export class Rails {
     }
 }
 
-function drawCurve(context: CanvasRenderingContext2D, curve: number[][], style: LineStyle) {
+function drawCurve(context: CanvasRenderingContext2D, curve: number[][], style: Style) {
     let i: number;
     let point = curve.at(1) as number[];
 
@@ -217,7 +241,7 @@ function drawCurve(context: CanvasRenderingContext2D, curve: number[][], style: 
         let point = curve.at(i) as number[];
         context.lineTo(point[0], point[1]);
     }
-    context.strokeStyle = style.strokeStype;
+    context.strokeStyle = style.strokeColor;
     context.lineWidth = style.lineWidth;
     if (style.hasShadow) {
         context.shadowBlur = style.shadowBlur as number;

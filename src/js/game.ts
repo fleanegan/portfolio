@@ -61,8 +61,7 @@ export default class Game {
     }
 
     public render(): void {
-        this.logic.updateLocomotivePosition(this.drawingState.pressedKeys);
-        this.logic.process();
+        this.logic.process(this.drawingState.pressedKeys);
     }
 
     private isForcingRedraw(): boolean {

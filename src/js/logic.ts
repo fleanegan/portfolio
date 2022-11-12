@@ -31,21 +31,21 @@ export class Logic {
         return this.background;
     }
 
+    process(pressedKeys: Set<string>) {
+        this.updateLocomotivePosition(pressedKeys);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.putImageData(this.getBackground(), 0, 0);
+        this.locomotive.draw(this.context);
+        this.rails.draw(this.context);
+    }
+
     updateLocomotivePosition(pressedKeys: Set<string>) {
-        let currentLocomotivePosition = this.locomotive.getPositionOnScreen();
         if (pressedKeys.has('ArrowRight'))
             this.locomotive.move(Direction.Forward);
         if (pressedKeys.has('ArrowLeft'))
             this.locomotive.move(Direction.Backwards);
         if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft'))
             this.locomotive.move(Direction.Idle);
-    }
-
-    process() {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.context.putImageData(this.getBackground(), 0, 0);
-        this.locomotive.draw(this.context);
-        this.rails.draw(this.context);
     }
 
     zoom() {

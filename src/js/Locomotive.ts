@@ -48,14 +48,16 @@ export class Locomotive {
 
     localPosToGlobal(local: Point) {
         return new Point(
-            this.offset.x + local.x,
-            this.offset.y + local.y,
+            Math.round(this.offset.x + local.x),
+            Math.round(this.offset.y + local.y),
         );
     }
 
     getPositionOnScreen(): Point[] {
         let result: Point[] = [];
-        let rearWheels = this.rails.getInterpolatedTrainPosition(this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35);
+        // todo: performance advantages?
+        // let rearWheels = this.rails.getInterpolatedTrainPosition(this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35);
+        let rearWheels = Point.fromArr(this.rails.curve[Math.round((this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35) * this.rails.curve.length)]);
         let indexOfRearWheels = getIndexOfClosestValue(rearWheels, this.rails.curve);
         let frontWheels = Point.fromArr(this.rails.curve[indexOfRearWheels]);
 
@@ -83,7 +85,7 @@ export class Locomotive {
     draw(context: CanvasRenderingContext2D) {
         let currentPos = this.getPositionOnScreen();
         let angleInRadians = Math.atan2(currentPos[1].y - currentPos[0].y, currentPos[1].x - currentPos[0].x);
-        let scaledHeight = this.img.height * this.length / this.img.width;
+        let scaledHeight = Math.round(this.img.height * this.length / this.img.width);
 
         context.translate(currentPos[0].x, currentPos[0].y);
         context.rotate(angleInRadians);
