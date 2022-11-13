@@ -2,6 +2,7 @@ import {CurveInterpolator} from 'curve-interpolator';
 import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {Direction} from "./Locomotive";
+import {GameObject} from "./GameObject";
 
 class Style {
     constructor(
@@ -17,34 +18,13 @@ class Style {
     }
 }
 
-class Item {
-    unScaledCenter: Point;
-
-    constructor(public center: Point) {
-        this.unScaledCenter = new Point(center.x / Scaler.x(1), center.y / Scaler.y(1));
-    }
-
-    setCenter(newCenter: Point) {
-        this.center = newCenter;
-        this.center.x;
-        this.center.y;
-        this.unScaledCenter.x = newCenter.x / Scaler.x(1);
-        this.unScaledCenter.y = newCenter.y / Scaler.y(1);
-    }
-
-    updateZoom() {
-        this.center.x = Scaler.x(this.unScaledCenter.x);
-        this.center.y = Scaler.y(this.unScaledCenter.y);
-    }
-}
-
 enum HighlightMode {
     None,
     Light,
     Full
 }
 
-export class DragItem extends Item {
+export class DragItem extends GameObject {
     radius: number = 32;
     public isHightlighted: HighlightMode = HighlightMode.None;
 
@@ -76,7 +56,7 @@ export class DragItem extends Item {
     }
 }
 
-export class ContentTile extends Item {
+export class ContentTile extends GameObject {
     private dragTarget: DragItem;
 
     constructor(private upperLeft: Point, private title: string) {
@@ -125,14 +105,42 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     context.stroke();
 }
 
-export class Rails {
+export class Path{
     interpolator: CurveInterpolator;
-    curve: number[][];
+    points: number[][];
+
+    constructor() {
+    }
+
+    pxToNormalized(px: number): number {
+        return px / this.interpolator.length;
+    }
+
+    getInterpolatedTrainPosition(normalizedInput: number): Point {
+        if (normalizedInput < 0 || normalizedInput > 1)
+            throw new Error("input from zero to one expected, got " + normalizedInput)
+        let tmp = this.interpolator.getPointAt(normalizedInput) as number[];
+
+        return new Point(tmp[0], tmp[1]);
+    }
+
+    interpolate(tmp: number[][]){
+        this.interpolator = new CurveInterpolator(tmp, {tension: -.75});
+        this.points = this.interpolator.getPoints(this.interpolator.length);
+    }
+
+    getPoints(): number[][]{
+        return this.points;
+    }
+}
+
+export class InteractiveBackground {
     private splineBasePoints: DragItem[] = [];
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
     targets: ContentTile[];
     autoPilotMode: Direction = Direction.Idle;
+    path: Path;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -140,31 +148,19 @@ export class Rails {
             const y = point[1];
             this.splineBasePoints.push(new DragItem(new Point(x, y), new Style('#ffffff', '#ffffff', 5, false)));
         });
-        this.interpolate();
+        this.path = new Path();
+        this.updatePath();
         this.targets = [new ContentTile(new Point(125, 800), "This Is Test")];
     }
 
-    private interpolate() {
+    private updatePath() {
         let tmp: number[][] = [];
         for (const splineBasePoint of this.splineBasePoints) {
             splineBasePoint.updateZoom();
             tmp.push(splineBasePoint.center.toArr());
         }
-        this.interpolator = new CurveInterpolator(tmp, {tension: -.75});
-        this.curve = this.interpolator.getPoints(this.interpolator.length);
+        this.path.interpolate(tmp);
         this.shouldRedrawRails = true;
-    }
-
-    pxToNormalized(px: number): number {
-        return px / this.interpolator.length;
-    }
-
-    public getInterpolatedTrainPosition(normalizedInput: number): Point {
-        if (normalizedInput < 0 || normalizedInput > 1)
-            throw new Error("input from zero to one expected, got " + normalizedInput)
-        let tmp = this.interpolator.getPointAt(normalizedInput) as number[];
-
-        return new Point(tmp[0], tmp[1]);
     }
 
     public reDraw(context: CanvasRenderingContext2D): void {
@@ -189,10 +185,10 @@ export class Rails {
 
     private drawRails(context: CanvasRenderingContext2D) {
         let scaleFactor = Scaler.x(1);
-        let negativeOffset = generateOffsetCurveNegative(this.curve, 10 * scaleFactor);
-        let positiveOffset = generateOffsetCurvePositive(this.curve, 10 * scaleFactor);
+        let negativeOffset = generateOffsetCurveNegative(this.path.getPoints(), 10 * scaleFactor);
+        let positiveOffset = generateOffsetCurvePositive(this.path.getPoints(), 10 * scaleFactor);
 
-        drawCurve(context, this.curve,
+        drawCurve(context, this.path.getPoints(),
             new Style('#d4a373','#ffffff',  45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
         for (let i: number = 1; i < negativeOffset.length; i++) {
             if (i % (Math.floor(20 * scaleFactor)) === 0) {
@@ -217,7 +213,7 @@ export class Rails {
         this.targets.forEach((target) => {
             target.updateZoom();
         })
-        this.interpolate();
+        this.updatePath();
     }
 
     handlePointerDown(pointerPosition: Point) {
@@ -234,7 +230,7 @@ export class Rails {
 
     handlePointerUp(pointerPosition: Point) {
         if (this.isBeingDragged()) {
-            this.interpolate();
+            this.updatePath();
             this.targets.forEach((target) => {
                 target.setHightlightMode(HighlightMode.None);
             });

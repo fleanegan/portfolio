@@ -1,14 +1,14 @@
-import {Rails} from "./Background";
+import {InteractiveBackground, Path} from "./Background";
 import {getIndexOfClosestValue, Point} from "./mathUtils";
 import icon from '../../assets/locomotive.png'
 import {Scaler} from "./utils";
 
 export enum Direction {
-    FastBackwards = -1,
+    FastBackwards = -1.01,
     Backwards = -1,
     Idle = 0,
     Forward = 1,
-    FastForward = 1,
+    FastForward = 1.01,
 }
 
 export class Locomotive {
@@ -34,7 +34,7 @@ export class Locomotive {
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
     }
 
-    constructor(public rails: Rails, private length: number) {
+    constructor(public path: Path, private length: number) {
         this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
@@ -42,7 +42,7 @@ export class Locomotive {
 
     private truncateNormalizedPathLength(normalizedPathLength: number) {
         let result = normalizedPathLength;
-        const maxProgressWithoutTrainFallingOffTheRails = 1 - this.rails.pxToNormalized(this.length) * 1.35;
+        const maxProgressWithoutTrainFallingOffTheRails = 1 - this.path.pxToNormalized(this.length) * 1.35;
 
         if (result < 0)
             result = 0;
@@ -66,17 +66,17 @@ export class Locomotive {
         let result: Point[] = [];
         // todo: performance advantages?
         // let rearWheels = this.rails.getInterpolatedTrainPosition(this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35);
-        let rearWheels = Point.fromArr(this.rails.curve[Math.round((this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35) * this.rails.curve.length)]);
-        let indexOfRearWheels = getIndexOfClosestValue(rearWheels, this.rails.curve);
-        let frontWheels = Point.fromArr(this.rails.curve[indexOfRearWheels]);
+        let rearWheels = Point.fromArr(this.path.getPoints()[Math.round((this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35) * this.path.getPoints().length)]);
+        let indexOfRearWheels = getIndexOfClosestValue(rearWheels, this.path.getPoints());
+        let frontWheels = Point.fromArr(this.path.getPoints()[indexOfRearWheels]);
         function indexOfFrontWheelsForStraightLine() {
-            return Math.round(this.rails.pxToNormalized(this.length) * this.rails.interpolator.length * 0.6);
+            return Math.round(this.path.pxToNormalized(this.length) * this.path.interpolator.length * 0.6);
         }
 
         let i: number = indexOfFrontWheelsForStraightLine.call(this) ;
         while (frontWheels.distanceTo(rearWheels) < this.length * 0.6) {
-            if (indexOfRearWheels + i < this.rails.curve.length)
-                frontWheels = Point.fromArr(this.rails.curve[indexOfRearWheels + i])
+            if (indexOfRearWheels + i < this.path.getPoints().length)
+                frontWheels = Point.fromArr(this.path.getPoints()[indexOfRearWheels + i])
             else
                 break;
             i++;
@@ -87,7 +87,7 @@ export class Locomotive {
     }
 
     private getTrainLengthAsNormalizedPathLength() {
-        return this.rails.pxToNormalized(this.length);
+        return this.path.pxToNormalized(this.length);
     }
 
     draw(context: CanvasRenderingContext2D) {

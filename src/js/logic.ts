@@ -1,17 +1,17 @@
-import {drawBackground, Rails} from "./Background";
+import {drawBackground, InteractiveBackground} from "./Background";
 import {Direction, Locomotive} from "./Locomotive";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
 
 export class Logic {
-    private rails: Rails;
+    private rails: InteractiveBackground;
     private background: ImageData;
     private locomotive: Locomotive;
     private scalefactor: number;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
-        this.rails = new Rails([[300, 300], [1000, 300], [1000, 800], [1500, 800], [1500, 300]]);
-        this.locomotive = new Locomotive(this.rails, Scaler.x(175));
+        this.rails = new InteractiveBackground([[300, 300], [1000, 300], [1000, 800], [1500, 800], [1500, 300]]);
+        this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
 
