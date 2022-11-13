@@ -4,9 +4,11 @@ import icon from '../../assets/locomotive.png'
 import {Scaler} from "./utils";
 
 export enum Direction {
-    Forward = 1,
+    FastBackwards = -1,
+    Backwards = -1,
     Idle = 0,
-    Backwards = -1
+    Forward = 1,
+    FastForward = 1,
 }
 
 export class Locomotive {
@@ -16,10 +18,17 @@ export class Locomotive {
     private velocity = 0;
 
     move(direction: Direction) {
-        if (Direction.Idle == direction) {
+        if (Direction.Idle === direction) {
             this.velocity *= 0.95;
         } else if (Math.abs(this.velocity) <= 0.002) {
             this.velocity += 0.00025 * direction;
+        }
+        else{
+            if (direction === Direction.FastBackwards) {
+                this.velocity = -0.05;
+            }
+            else
+                this.velocity = Math.sign(direction) * 0.002;
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
@@ -60,7 +69,6 @@ export class Locomotive {
         let rearWheels = Point.fromArr(this.rails.curve[Math.round((this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35) * this.rails.curve.length)]);
         let indexOfRearWheels = getIndexOfClosestValue(rearWheels, this.rails.curve);
         let frontWheels = Point.fromArr(this.rails.curve[indexOfRearWheels]);
-
         function indexOfFrontWheelsForStraightLine() {
             return Math.round(this.rails.pxToNormalized(this.length) * this.rails.interpolator.length * 0.6);
         }

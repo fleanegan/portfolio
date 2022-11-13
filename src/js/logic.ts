@@ -1,4 +1,4 @@
-import {DragItem, drawBackground, Rails} from "./Background";
+import {drawBackground, Rails} from "./Background";
 import {Direction, Locomotive} from "./Locomotive";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
@@ -32,6 +32,7 @@ export class Logic {
     }
 
     process(pressedKeys: Set<string>) {
+        console.log("rail mode: " + this.rails.autoPilotMode);
         this.updateLocomotivePosition(pressedKeys);
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
@@ -40,12 +41,24 @@ export class Logic {
     }
 
     updateLocomotivePosition(pressedKeys: Set<string>) {
-        if (pressedKeys.has('ArrowRight'))
-            this.locomotive.move(Direction.Forward);
-        if (pressedKeys.has('ArrowLeft'))
-            this.locomotive.move(Direction.Backwards);
-        if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft'))
-            this.locomotive.move(Direction.Idle);
+        if (this.rails.autoPilotMode == Direction.Idle) {
+            if (pressedKeys.has('ArrowRight'))
+                this.locomotive.move(Direction.Forward);
+            if (pressedKeys.has('ArrowLeft'))
+                this.locomotive.move(Direction.Backwards);
+            if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft'))
+                this.locomotive.move(Direction.Idle);
+        }
+        else
+            this.locomotive.move(this.rails.autoPilotMode);
+        for (const target of this.rails.targets) {
+            if (target.getDragTargetCenter().distanceTo(this.locomotive.getPositionOnScreen()[1]))
+            {
+                // this.rails.autoPilotMode = Direction.Idle;
+                //window.open("https://www.tagesschau.de", "_self");
+                
+            }
+        }
     }
 
     zoom() {

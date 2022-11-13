@@ -1,6 +1,7 @@
 import {CurveInterpolator} from 'curve-interpolator';
 import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from "./mathUtils";
 import {Scaler} from "./utils";
+import {Direction} from "./Locomotive";
 
 class Style {
     constructor(
@@ -130,7 +131,8 @@ export class Rails {
     private splineBasePoints: DragItem[] = [];
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
-    private targets: ContentTile[];
+    targets: ContentTile[];
+    autoPilotMode: Direction = Direction.Idle;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -225,6 +227,7 @@ export class Rails {
                 this.targets.forEach((target) =>{
                   target.setHightlightMode(HighlightMode.Light);
                 })
+                this.autoPilotMode = Direction.FastBackwards;
             }
         }
     }
@@ -232,10 +235,18 @@ export class Rails {
     handlePointerUp(pointerPosition: Point) {
         if (this.isBeingDragged()) {
             this.interpolate();
-            this.activeDragPoint.pop();
-            this.targets.forEach((target) =>{
+            this.targets.forEach((target) => {
                 target.setHightlightMode(HighlightMode.None);
-            })
+            });
+            for (const target of this.targets) {
+                const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
+                if (distance < this.activeDragPoint[0].radius * 2) {
+                    this.autoPilotMode = Direction.FastForward;
+                }
+            }
+            this.activeDragPoint.pop();
+            if (this.autoPilotMode !== Direction.FastForward)
+                this.autoPilotMode = Direction.Idle;
         }
     }
 
