@@ -29,14 +29,18 @@ export default class Game {
     }
 
     addEventListeners(): void {
-        this.canvas.addEventListener('pointerdown', () => {
+        this.canvas.addEventListener('pointerdown', (e) => {
+            this.drawingState.pointerPosition.x = e.clientX;
+            this.drawingState.pointerPosition.y = e.clientY;
             this.drawingState.isPointerDown = true;
-            this.logic.handlePointerDown(new Point(this.drawingState.pointerPosition.x, this.drawingState.pointerPosition.y));
+            this.logic.handlePointerDown(new Point(e.clientX, e.clientY));
         });
 
-        this.canvas.addEventListener('pointerup', () => {
+        this.canvas.addEventListener('pointerup', (e) => {
+            this.drawingState.pointerPosition.x = e.clientX;
+            this.drawingState.pointerPosition.y = e.clientY;
             this.drawingState.isPointerDown = false;
-            this.logic.handlePointerUp(new Point(this.drawingState.pointerPosition.x, this.drawingState.pointerPosition.y));
+            this.logic.handlePointerUp(new Point(e.clientX, e.clientY));
         });
 
         this.canvas.addEventListener('pointermove', (e) => {

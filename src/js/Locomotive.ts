@@ -17,6 +17,12 @@ export class Locomotive {
     private img: HTMLImageElement;
     private velocity = 0;
 
+    constructor(public path: Path, private length: number) {
+        this.offset = new Point(0, 0);
+        this.img = new Image();
+        this.img.src = icon;
+    }
+
     move(direction: Direction) {
         if (Direction.Idle === direction) {
             this.velocity *= 0.95;
@@ -26,54 +32,10 @@ export class Locomotive {
             if (direction === Direction.FastBackwards) {
                 this.velocity = -0.05;
             } else
-                this.velocity = Math.sign(direction) * 0.002;
+                this.velocity = Math.sign(this.velocity) * 0.002;
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
-    }
-
-    constructor(public path: Path, private length: number) {
-        this.offset = new Point(0, 0);
-        this.img = new Image();
-        this.img.src = icon;
-    }
-
-    private truncateNormalizedPathLength(normalizedPathLength: number) {
-        let result = normalizedPathLength;
-
-        if (result < 0)
-            result += 1;
-        if (result >= 1)
-            result -= 1;
-        return result;
-    }
-
-    setGlobalOffset(offset: Point) {
-        this.offset = offset;
-    }
-
-    localPosToGlobal(local: Point) {
-        return new Point(
-            Math.round(this.offset.x + local.x),
-            Math.round(this.offset.y + local.y),
-        );
-    }
-
-
-    calcIndexRearWheels(): number {
-        let progressRearWheels = this.truncateNormalizedPathLength(
-            this.trainProgress + this.getTrainLengthAsNormalizedPathLength());
-        return Math.round(progressRearWheels * this.path.getPoints().length);
-
-    }
-
-    indexOfFrontWheelsForStraightLine(indexRearWheels: number, proportionsWheelsToLength: number): number {
-        let result = Math.round(this.path.pxToNormalized(this.length) * this.path.interpolator.length * proportionsWheelsToLength);
-
-        result += indexRearWheels;
-        if (result >= this.path.getPoints().length)
-            result -= this.path.getPoints().length;
-        return result;
     }
 
     calcAxlePositions(): Point[] {
@@ -94,8 +56,31 @@ export class Locomotive {
         return result;
     }
 
-    private getTrainLengthAsNormalizedPathLength() {
-        return this.path.pxToNormalized(this.length);
+    setGlobalOffset(offset: Point) {
+        this.offset = offset;
+    }
+
+    localPosToGlobal(local: Point) {
+        return new Point(
+            Math.round(this.offset.x + local.x),
+            Math.round(this.offset.y + local.y),
+        );
+    }
+
+    calcIndexRearWheels(): number {
+        let progressRearWheels = this.truncateNormalizedPathLength(
+            this.trainProgress + this.getTrainLengthAsNormalizedPathLength());
+        return Math.round(progressRearWheels * this.path.getPoints().length);
+
+    }
+
+    indexOfFrontWheelsForStraightLine(indexRearWheels: number, proportionsWheelsToLength: number): number {
+        let result = Math.round(this.path.pxToNormalized(this.length) * this.path.interpolator.length * proportionsWheelsToLength);
+
+        result += indexRearWheels;
+        if (result >= this.path.getPoints().length)
+            result -= this.path.getPoints().length;
+        return result;
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -112,5 +97,19 @@ export class Locomotive {
 
     scaleLength(newScalefactor: number) {
         this.length = Math.round(175 * newScalefactor);
+    }
+
+    private truncateNormalizedPathLength(normalizedPathLength: number) {
+        let result = normalizedPathLength;
+
+        if (result < 0)
+            result += 1;
+        if (result >= 1)
+            result -= 1;
+        return result;
+    }
+
+    private getTrainLengthAsNormalizedPathLength() {
+        return this.path.pxToNormalized(this.length);
     }
 }

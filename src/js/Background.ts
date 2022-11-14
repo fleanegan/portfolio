@@ -268,16 +268,15 @@ export class InteractiveBackground {
         this.updatePath();
     }
 
-    // findNearestPointIn(stack: Point[], )
-
     private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
         let nearestBasePoint = this.splineBasePoints[0];
-        let shortestDistance = 9999;
+        let shortestDistance = Number.MAX_SAFE_INTEGER;
 
         for (const target of this.targets) {
-            if (target.getDragTargetCenter().distanceTo(pointerPosition) < 64) {
+            if (pointerPosition.distanceTo(target.getDragTargetCenter()) < 64) {
                 this.splineBasePoints.forEach((basePoint) => {
                     let distanceToTarget = basePoint.center.distanceTo(target.getDragTargetCenter());
+
                     if (distanceToTarget < shortestDistance) {
                         nearestBasePoint = basePoint;
                         shortestDistance = distanceToTarget;
@@ -303,6 +302,7 @@ export class InteractiveBackground {
 
     private autopilotToSelectedTarget(pointerPosition: Point) {
         let newDirection = Direction.Idle;
+
         for (const target of this.targets) {
             const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
             if (distance < this.activeDragPoint[0].radius * 2) {
@@ -313,11 +313,8 @@ export class InteractiveBackground {
     }
 
     handlePointerDown(pointerPosition: Point) {
+        this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
         this.selectBasePointToDrag(pointerPosition);
-        console.log("clicked: " + pointerPosition);
-        if (this.isBeingDragged() == false) {
-            this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
-        }
     }
 
     handlePointerUp(pointerPosition: Point) {
@@ -331,7 +328,6 @@ export class InteractiveBackground {
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
-        console.log("moved: " + pointerPosition);
         if (this.isBeingDragged()) {
             if (this.isTouchingAnotherSplineBasePoint(pointerPosition))
                 return;

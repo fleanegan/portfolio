@@ -51,12 +51,14 @@ export class Logic {
         }
         else
             this.locomotive.move(this.rails.autoPilotMode);
+        this.watchForTargetHits();
+    }
+
+    private watchForTargetHits() {
         for (const target of this.rails.targets) {
-            if (target.getDragTargetCenter().distanceTo(this.locomotive.calcAxlePositions()[1]) < 20)
-            {
+            if (target.getDragTargetCenter().distanceTo(this.locomotive.calcAxlePositions()[1]) < 20) {
                 this.rails.autoPilotMode = Direction.Idle;
                 window.open("https://www.tagesschau.de", "_self");
-                
             }
         }
     }
