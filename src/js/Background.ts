@@ -3,6 +3,7 @@ import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from ".
 import {Scaler} from "./utils";
 import {Direction} from "./Locomotive";
 import {GameObject} from "./GameObject";
+import {inflate} from "zlib";
 
 class Style {
     constructor(
@@ -230,6 +231,25 @@ export class InteractiveBackground {
                 });
             }
         }
+        console.log("clicked: " + pointerPosition);
+    if (this.isBeingDragged() == false){
+            for (const target of this.targets) {
+                console.log("target on pos: " + target.getDragTargetCenter());
+                if (target.getDragTargetCenter().distanceTo(pointerPosition) < 64){
+                    console.log("clicked at target on pos: " + pointerPosition);
+                    let nearestBasePoint = this.splineBasePoints[0];
+                    let shortestDistance = 999999;
+                    this.splineBasePoints.forEach((basePoint) => {
+                        let distanceToTarget = basePoint.center.distanceTo(target.getDragTargetCenter());
+                        if (distanceToTarget < shortestDistance){
+                            nearestBasePoint = basePoint;
+                            shortestDistance = distanceToTarget;
+                        }
+                    })
+                    nearestBasePoint.setCenter(target.getDragTargetCenter());
+                }
+            }
+        }
     }
 
     handlePointerUp(pointerPosition: Point) {
@@ -247,8 +267,8 @@ export class InteractiveBackground {
             this.activeDragPoint.pop();
             if (this.autoPilotMode !== Direction.FastForward)
                 this.autoPilotMode = Direction.Idle;
+            console.log(this.path.basePoints);
         }
-        console.log(this.path.basePoints);
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
