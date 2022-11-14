@@ -112,6 +112,7 @@ export class Path{
     points: number[][];
     basePoints: number[][];
 
+
     constructor() {
     }
 
@@ -129,8 +130,7 @@ export class Path{
 
     interpolate(basePoints: number[][]){
         this.basePoints = basePoints;
-        this.interpolator = new CurveInterpolator(basePoints, {tension: -1.75});
-        this.interpolator.closed = true;
+        this.interpolator = new CurveInterpolator(basePoints, {tension: 0, closed: true});
         this.points = this.interpolator.getPoints(this.interpolator.length);
     }
 
@@ -252,7 +252,7 @@ export class InteractiveBackground {
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
-        if (this.activeDragPoint.length == 1) {
+        if (this.isBeingDragged()) {
             for (const splineBasePoint of this.splineBasePoints) {
                 const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
                 const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
