@@ -58,6 +58,8 @@ export class DragItem extends GameObject {
 
 export class ContentTile extends GameObject {
     private dragTarget: DragItem;
+    private height: number = 350;
+    private width: number = 390;
 
     constructor(private upperLeft: Point, private title: string) {
         super(upperLeft);
@@ -92,7 +94,7 @@ export class ContentTile extends GameObject {
         context.shadowColor = '#ffffff';
         context.shadowOffsetY = 2;
         context.shadowOffsetX = 2;
-        context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, 390, 350);
+        context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, this.width, this.height);
         context.stroke();
 
     }
@@ -108,6 +110,7 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
 export class Path{
     interpolator: CurveInterpolator;
     points: number[][];
+    basePoints: number[][];
 
     constructor() {
     }
@@ -124,8 +127,10 @@ export class Path{
         return new Point(tmp[0], tmp[1]);
     }
 
-    interpolate(tmp: number[][]){
-        this.interpolator = new CurveInterpolator(tmp, {tension: -.75});
+    interpolate(basePoints: number[][]){
+        this.basePoints = basePoints;
+        this.interpolator = new CurveInterpolator(basePoints, {tension: -1.75});
+        this.interpolator.closed = true;
         this.points = this.interpolator.getPoints(this.interpolator.length);
     }
 
@@ -220,10 +225,9 @@ export class InteractiveBackground {
         for (let dragItem of this.splineBasePoints) {
             if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius) {
                 this.activeDragPoint.push(dragItem);
-                this.targets.forEach((target) =>{
-                  target.setHightlightMode(HighlightMode.Light);
-                })
-                this.autoPilotMode = Direction.FastBackwards;
+                this.targets.forEach((target) => {
+                    target.setHightlightMode(HighlightMode.Light);
+                });
             }
         }
     }
@@ -244,6 +248,7 @@ export class InteractiveBackground {
             if (this.autoPilotMode !== Direction.FastForward)
                 this.autoPilotMode = Direction.Idle;
         }
+        console.log(this.path.basePoints);
     }
 
     handlePointerPressedMove(pointerPosition: Point) {

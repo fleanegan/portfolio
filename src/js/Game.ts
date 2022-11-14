@@ -1,4 +1,4 @@
-import {Logic} from "./logic";
+import {Logic} from "./Logic";
 import {Point} from "./mathUtils";
 
 type DrawingState = {

@@ -22,12 +22,10 @@ export class Locomotive {
             this.velocity *= 0.95;
         } else if (Math.abs(this.velocity) <= 0.002) {
             this.velocity += 0.00025 * direction;
-        }
-        else{
+        } else {
             if (direction === Direction.FastBackwards) {
                 this.velocity = -0.05;
-            }
-            else
+            } else
                 this.velocity = Math.sign(direction) * 0.002;
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
@@ -42,12 +40,11 @@ export class Locomotive {
 
     private truncateNormalizedPathLength(normalizedPathLength: number) {
         let result = normalizedPathLength;
-        const maxProgressWithoutTrainFallingOffTheRails = 1 - this.path.pxToNormalized(this.length) * 1.35;
 
         if (result < 0)
-            result = 0;
-        if (result >= maxProgressWithoutTrainFallingOffTheRails)
-            result = maxProgressWithoutTrainFallingOffTheRails;
+            result += 1;
+        if (result >= 1)
+            result -= 1;
         return result;
     }
 
@@ -62,23 +59,34 @@ export class Locomotive {
         );
     }
 
-    getPositionOnScreen(): Point[] {
-        let result: Point[] = [];
-        // todo: performance advantages?
-        // let rearWheels = this.rails.getInterpolatedTrainPosition(this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35);
-        let rearWheels = Point.fromArr(this.path.getPoints()[Math.round((this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.35) * this.path.getPoints().length)]);
-        let indexOfRearWheels = getIndexOfClosestValue(rearWheels, this.path.getPoints());
-        let frontWheels = Point.fromArr(this.path.getPoints()[indexOfRearWheels]);
-        function indexOfFrontWheelsForStraightLine() {
-            return Math.round(this.path.pxToNormalized(this.length) * this.path.interpolator.length * 0.6);
-        }
 
-        let i: number = indexOfFrontWheelsForStraightLine.call(this) ;
-        while (frontWheels.distanceTo(rearWheels) < this.length * 0.6) {
-            if (indexOfRearWheels + i < this.path.getPoints().length)
-                frontWheels = Point.fromArr(this.path.getPoints()[indexOfRearWheels + i])
-            else
-                break;
+    calcIndexRearWheels(): number {
+        let progressRearWheels = this.truncateNormalizedPathLength(
+            this.trainProgress + this.getTrainLengthAsNormalizedPathLength());
+        return Math.round(progressRearWheels * this.path.getPoints().length);
+
+    }
+
+    indexOfFrontWheelsForStraightLine(indexRearWheels: number, proportionsWheelsToLength: number): number {
+        let result = Math.round(this.path.pxToNormalized(this.length) * this.path.interpolator.length * proportionsWheelsToLength);
+
+        result += indexRearWheels;
+        if (result >= this.path.getPoints().length)
+            result -= this.path.getPoints().length;
+        return result;
+    }
+
+    calcAxlePositions(): Point[] {
+        let result: Point[] = [];
+        let proportionsWheel = 0.3;
+        let indexRearWheels = this.calcIndexRearWheels();
+        let rearWheels = Point.fromArr(this.path.getPoints()[indexRearWheels]);
+        let frontWheels = Point.fromArr(this.path.getPoints()[indexRearWheels]);
+        let i: number = this.indexOfFrontWheelsForStraightLine(indexRearWheels, proportionsWheel);
+
+        while (frontWheels.distanceTo(rearWheels) < this.length * proportionsWheel
+        && i < this.path.getPoints().length) {
+            frontWheels = Point.fromArr(this.path.getPoints()[i])
             i++;
         }
         result.push(this.localPosToGlobal(rearWheels));
@@ -91,13 +99,13 @@ export class Locomotive {
     }
 
     draw(context: CanvasRenderingContext2D) {
-        let currentPos = this.getPositionOnScreen();
+        let currentPos = this.calcAxlePositions();
         let angleInRadians = Math.atan2(currentPos[1].y - currentPos[0].y, currentPos[1].x - currentPos[0].x);
         let scaledHeight = Math.round(this.img.height * this.length / this.img.width);
 
         context.translate(currentPos[0].x, currentPos[0].y);
         context.rotate(angleInRadians);
-        context.drawImage(this.img, 0, -scaledHeight / 2, this.length, scaledHeight);
+        context.drawImage(this.img, -this.length * 0.25, -scaledHeight / 2, this.length, scaledHeight);
         context.rotate(-angleInRadians);
         context.translate(-currentPos[0].x, -currentPos[0].y);
     }

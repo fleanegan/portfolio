@@ -10,7 +10,7 @@ export class Logic {
     private scalefactor: number;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
-        this.rails = new InteractiveBackground([[300, 300], [1000, 300], [1000, 800], [1500, 800], [1500, 300]]);
+        this.rails = new InteractiveBackground([[927, 198 ],[528, 222 ],[526, 549 ],[1198, 839 ],[1580, 829 ],[1540, 468 ],[1206, 439 ]]);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
@@ -52,10 +52,10 @@ export class Logic {
         else
             this.locomotive.move(this.rails.autoPilotMode);
         for (const target of this.rails.targets) {
-            if (target.getDragTargetCenter().distanceTo(this.locomotive.getPositionOnScreen()[1]))
+            if (target.getDragTargetCenter().distanceTo(this.locomotive.calcAxlePositions()[1]) < 20)
             {
-                // this.rails.autoPilotMode = Direction.Idle;
-                //window.open("https://www.tagesschau.de", "_self");
+                this.rails.autoPilotMode = Direction.Idle;
+                window.open("https://www.tagesschau.de", "_self");
                 
             }
         }

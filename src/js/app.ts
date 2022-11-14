@@ -1,7 +1,7 @@
 declare var require: any;
 require('../css/main.css');
 
-import Game from './game';
+import Game from './Game';
 
 class App {
 	private _game: Game;
