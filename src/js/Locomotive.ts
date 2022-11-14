@@ -16,24 +16,24 @@ export class Locomotive {
     private offset: Point;
     private img: HTMLImageElement;
     private velocity = 0;
-    autopilotVelocity: number;
+    private autopilotVelocity: number = 0;
     private autopilotDestinationAsProgress: number | null = null;
+    direction: Direction = Direction.Idle;
 
     constructor(public path: Path, private length: number) {
         this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
-        this.autopilotVelocity = 0;
     }
 
-    private hasReachedDestination(): boolean{
+    hasReachedDestination(): boolean{
         if (this.autopilotVelocity > 0)
             return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() >= this.autopilotDestinationAsProgress;
         return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() <= this.autopilotDestinationAsProgress;
     }
 
-    move(direction: number) {
-        if (this.autopilotDestinationAsProgress != null){
+    move() {
+        if (this.direction === Direction.Auto){
             const old = this.autopilotDestinationAsProgress;
             if (Math.abs(this.velocity) <= Math.abs(this.autopilotVelocity))
                 this.velocity += 0.001 * Math.sign(this.autopilotVelocity);
@@ -44,10 +44,10 @@ export class Locomotive {
             }
         }
         else{
-            if (Direction.Idle == direction) {
+            if (Direction.Idle === this.direction) {
                 this.velocity *= 0.95;
             } else if (Math.abs(this.velocity) <= 0.002) {
-                this.velocity += 0.00025 * direction;
+                this.velocity += 0.00025 * this.direction;
             }
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
@@ -134,5 +134,9 @@ export class Locomotive {
 
     private getTrainLengthAsNormalizedPathLength() {
         return this.path.pxToNormalized(this.length);
+    }
+
+    setDirection(direction: Direction) {
+        this.direction = direction;
     }
 }

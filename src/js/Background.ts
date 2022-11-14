@@ -156,7 +156,7 @@ export class InteractiveBackground {
     private activeDragPoint: DragItem[] = [];
     targets: ContentTile[];
     path: Path;
-    autopilotDestination: Point[] = [];
+    autopilotDestination: Point | null = null;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -283,7 +283,7 @@ export class InteractiveBackground {
                     }
                 })
                 nearestBasePoint.setCenter(target.getDragTargetCenter());
-                this.autopilotDestination = [target.getDragTargetCenter()];
+                this.autopilotDestination = target.getDragTargetCenter();
             }
         }
     }

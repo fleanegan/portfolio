@@ -10,7 +10,7 @@ export class Logic {
     private scalefactor: number;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
-        this.rails = new InteractiveBackground([[927, 198 ],[528, 222 ],[526, 549 ],[1198, 839 ],[1580, 829 ],[1540, 468 ],[1206, 439 ]]);
+        this.rails = new InteractiveBackground([[927, 198], [528, 222], [526, 549], [1198, 839], [1580, 829], [1540, 468], [1206, 439]]);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
@@ -32,35 +32,28 @@ export class Logic {
     }
 
     process(pressedKeys: Set<string>) {
-        this.updateLocomotivePosition(pressedKeys);
+        this.updateLocomotiveDirection(pressedKeys);
+        if (this.locomotive.hasReachedDestination()) {
+            // window.open("https://www.tagesschau.de", "_self");
+        }
+        this.locomotive.move();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
         this.locomotive.draw(this.context);
         this.rails.draw(this.context);
     }
 
-    updateLocomotivePosition(pressedKeys: Set<string>) {
-        if (this.rails.autopilotDestination.length == 0) {
+    updateLocomotiveDirection(pressedKeys: Set<string>) {
+        if (this.rails.autopilotDestination == null) {
             if (pressedKeys.has('ArrowRight'))
-                this.locomotive.move(Direction.Forward);
-            if (pressedKeys.has('ArrowLeft'))
-                this.locomotive.move(Direction.Backwards);
-            if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft'))
-                this.locomotive.move(Direction.Idle);
-        }
-        else
-        {
+                this.locomotive.setDirection(Direction.Forward);
+            else if (pressedKeys.has('ArrowLeft'))
+                this.locomotive.setDirection(Direction.Backwards);
+            if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft') && this.locomotive.direction != Direction.Auto)
+                this.locomotive.setDirection(Direction.Idle);
+        } else {
             console.log("auto");
-            this.locomotive.move(Direction.Auto);
-        }
-        this.watchForTargetHits();
-    }
-
-    private watchForTargetHits() {
-        for (const target of this.rails.targets) {
-            if (target.getDragTargetCenter().distanceTo(this.locomotive.calcAxlePositions()[1]) < 20) {
-                // window.open("https://www.tagesschau.de", "_self");
-            }
+            this.locomotive.setDirection(Direction.Auto);
         }
     }
 
@@ -79,9 +72,9 @@ export class Logic {
             this.rails.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }
-        if (this.rails.autopilotDestination.length > 0){
-            this.locomotive.setDestination(this.rails.autopilotDestination[0]);
-            this.rails.autopilotDestination = [];
+        if (this.rails.autopilotDestination != null) {
+            this.locomotive.setDestination(this.rails.autopilotDestination);
+            this.rails.autopilotDestination = null;
         }
     }
 
