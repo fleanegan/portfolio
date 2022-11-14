@@ -155,8 +155,8 @@ export class InteractiveBackground {
     private shouldRedrawRails: boolean;
     private activeDragPoint: DragItem[] = [];
     targets: ContentTile[];
-    autoPilotMode: Direction = Direction.Idle;
     path: Path;
+    autopilotDestination: Point[] = [];
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -283,6 +283,7 @@ export class InteractiveBackground {
                     }
                 })
                 nearestBasePoint.setCenter(target.getDragTargetCenter());
+                this.autopilotDestination = [target.getDragTargetCenter()];
             }
         }
     }
@@ -309,7 +310,6 @@ export class InteractiveBackground {
                 newDirection = Direction.FastForward;
             }
         }
-        this.autoPilotMode = newDirection;
     }
 
     handlePointerDown(pointerPosition: Point) {

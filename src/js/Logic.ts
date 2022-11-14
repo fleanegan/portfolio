@@ -32,7 +32,6 @@ export class Logic {
     }
 
     process(pressedKeys: Set<string>) {
-        console.log("rail mode: " + this.rails.autoPilotMode);
         this.updateLocomotivePosition(pressedKeys);
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
@@ -41,7 +40,7 @@ export class Logic {
     }
 
     updateLocomotivePosition(pressedKeys: Set<string>) {
-        if (this.rails.autoPilotMode == Direction.Idle) {
+        if (this.rails.autopilotDestination.length == 0) {
             if (pressedKeys.has('ArrowRight'))
                 this.locomotive.move(Direction.Forward);
             if (pressedKeys.has('ArrowLeft'))
@@ -50,15 +49,17 @@ export class Logic {
                 this.locomotive.move(Direction.Idle);
         }
         else
-            this.locomotive.move(this.rails.autoPilotMode);
+        {
+            console.log("auto");
+            this.locomotive.move(Direction.Auto);
+        }
         this.watchForTargetHits();
     }
 
     private watchForTargetHits() {
         for (const target of this.rails.targets) {
             if (target.getDragTargetCenter().distanceTo(this.locomotive.calcAxlePositions()[1]) < 20) {
-                this.rails.autoPilotMode = Direction.Idle;
-                window.open("https://www.tagesschau.de", "_self");
+                // window.open("https://www.tagesschau.de", "_self");
             }
         }
     }
@@ -78,9 +79,13 @@ export class Logic {
             this.rails.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }
+        if (this.rails.autopilotDestination.length > 0){
+            this.locomotive.setDestination(this.rails.autopilotDestination[0]);
+            this.rails.autopilotDestination = [];
+        }
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
-        this.rails.handlePointerPressedMove(pointerPosition)
+        this.rails.handlePointerPressedMove(pointerPosition);
     }
 }

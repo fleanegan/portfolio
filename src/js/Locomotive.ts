@@ -1,7 +1,6 @@
-import {InteractiveBackground, Path} from "./Background";
+import {Path} from "./Background";
 import {getIndexOfClosestValue, Point} from "./mathUtils";
 import icon from '../../assets/locomotive.png'
-import {Scaler} from "./utils";
 
 export enum Direction {
     FastBackwards = -1.01,
@@ -9,6 +8,7 @@ export enum Direction {
     Idle = 0,
     Forward = 1,
     FastForward = 1.01,
+    Auto,
 }
 
 export class Locomotive {
@@ -16,26 +16,49 @@ export class Locomotive {
     private offset: Point;
     private img: HTMLImageElement;
     private velocity = 0;
+    autopilotVelocity: number;
+    private autopilotDestinationAsProgress: number | null = null;
 
     constructor(public path: Path, private length: number) {
         this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
+        this.autopilotVelocity = 0;
     }
 
-    move(direction: Direction) {
-        if (Direction.Idle === direction) {
-            this.velocity *= 0.95;
-        } else if (Math.abs(this.velocity) <= 0.002) {
-            this.velocity += 0.00025 * direction;
-        } else {
-            if (direction === Direction.FastBackwards) {
-                this.velocity = -0.05;
-            } else
-                this.velocity = Math.sign(this.velocity) * 0.002;
+    private hasReachedDestination(): boolean{
+        if (this.autopilotVelocity > 0)
+            return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() >= this.autopilotDestinationAsProgress;
+        return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() <= this.autopilotDestinationAsProgress;
+    }
+
+    move(direction: number) {
+        if (this.autopilotDestinationAsProgress != null){
+            const old = this.autopilotDestinationAsProgress;
+            if (Math.abs(this.velocity) <= Math.abs(this.autopilotVelocity))
+                this.velocity += 0.001 * Math.sign(this.autopilotVelocity);
+            if (this.hasReachedDestination()) {
+                this.autopilotVelocity = 0;
+                this.autopilotDestinationAsProgress = null;
+                this.velocity = 0;
+            }
+        }
+        else{
+            if (Direction.Idle == direction) {
+                this.velocity *= 0.95;
+            } else if (Math.abs(this.velocity) <= 0.002) {
+                this.velocity += 0.00025 * direction;
+            }
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
+    }
+
+    setDestination(destination: Point) {
+        this.autopilotDestinationAsProgress = getIndexOfClosestValue(destination, this.path.getPoints()) / this.path.getPoints().length;
+        let difference = this.autopilotDestinationAsProgress - this.trainProgress;
+        this.autopilotVelocity = difference / 10;
+        console.log("auto destination " + destination.x, destination.y);
     }
 
     calcAxlePositions(): Point[] {

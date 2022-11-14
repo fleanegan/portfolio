@@ -21,10 +21,8 @@ export class Point {
 
 export function getIndexOfClosestValue(point: Point, outOf: number[][]): number{
     const closest = outOf.reduce((a, b) => {
-        return Math.abs(b[0] - point.x) +
-        Math.abs(b[1] - point.y)
-        < Math.abs(a[0] - point.x) +
-        Math.abs(a[1] - point.y)
+        return Math.abs(b[0] - point.x) + Math.abs(b[1] - point.y)
+        < Math.abs(a[0] - point.x) + Math.abs(a[1] - point.y)
             ? b : a;
     });
     return outOf.indexOf(closest);
