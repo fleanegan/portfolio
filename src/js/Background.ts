@@ -3,20 +3,15 @@ import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from ".
 import {Scaler} from "./utils";
 import {Direction} from "./Locomotive";
 import {GameObject} from "./GameObject";
-import {inflate} from "zlib";
 
-class Style {
-    constructor(
-        public strokeColor: string,
-        public fillColor: string,
-        public lineWidth: number,
-        public hasShadow: boolean,
-        public shadowBlur?: number,
-        public shadowColor?: string,
-        public shadowOffsetY?: number,
-        public shadowOffsetX?: number,
-    ) {
-    }
+type Style = {
+    strokeColor: string;
+    fillColor: string;
+    lineWidth: number;
+    shadowBlur?: number;
+    shadowColor?: string;
+    shadowOffsetY?: number;
+    shadowOffsetX?: number;
 }
 
 enum HighlightMode {
@@ -38,6 +33,7 @@ export class DragItem extends GameObject {
         const style = this.getStyle();
 
         context.beginPath();
+        context.shadowBlur = 0;
         context.globalAlpha = 0.5;
         context.arc(this.center.x, this.center.y, radius, 0, 2 * Math.PI, false);
         context.fillStyle = style.fillColor;
@@ -66,21 +62,34 @@ export class ContentTile extends GameObject {
         super(upperLeft);
         let relativeDragTargetPosition = new Point(upperLeft.x + 300, upperLeft.y + 125);
         this.dragTarget = new DragItem(relativeDragTargetPosition,
-            new Style('#ffffff','#ffffff', 5, false),
-            new Style('#ff0000', '#ffffff',5, false),
-            new Style('#ff0000', '#ff0000',5, true, 10, '#ff0000', 0, 0));
+            {strokeColor: '#ffffff', fillColor: '#ffffff', lineWidth: 5},
+            {strokeColor: '#ff0000', fillColor: '#ffffff', lineWidth: 5},
+            {
+                strokeColor: '#ff0000',
+                fillColor: '#ff0000',
+                lineWidth: 5,
+                shadowBlur: 10,
+                shadowColor: '#ff0000',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0
+            })
+        ;
     }
 
     setHightlightMode(targetMode: HighlightMode) {
         this.dragTarget.isHightlighted = targetMode;
     }
 
-    getDragTargetCenter(): Point{
+    getDragTargetCenter(): Point {
         return this.dragTarget.center;
     }
 
     draw(context: CanvasRenderingContext2D) {
+        context.shadowBlur = 0;
         this.dragTarget.draw(context);
+        context.shadowBlur = 0;
+        context.shadowOffsetY = 0;
+        context.shadowOffsetX = 0;
         context.beginPath();
         context.fillStyle = '#ffffff';
         context.strokeStyle = '#ffffff';
@@ -97,7 +106,9 @@ export class ContentTile extends GameObject {
         context.shadowOffsetX = 2;
         context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, this.width, this.height);
         context.stroke();
-
+        context.shadowBlur = 0;
+        context.shadowOffsetY = 0;
+        context.shadowOffsetX = 0;
     }
 }
 
@@ -108,11 +119,10 @@ export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCa
     context.stroke();
 }
 
-export class Path{
+export class Path {
     interpolator: CurveInterpolator;
     points: number[][];
     basePoints: number[][];
-
 
     constructor() {
     }
@@ -129,13 +139,13 @@ export class Path{
         return new Point(tmp[0], tmp[1]);
     }
 
-    interpolate(basePoints: number[][]){
+    interpolate(basePoints: number[][]) {
         this.basePoints = basePoints;
         this.interpolator = new CurveInterpolator(basePoints, {tension: 0, closed: true});
         this.points = this.interpolator.getPoints(this.interpolator.length);
     }
 
-    getPoints(): number[][]{
+    getPoints(): number[][] {
         return this.points;
     }
 }
@@ -152,11 +162,15 @@ export class InteractiveBackground {
         points.forEach((point) => {
             const x = point[0];
             const y = point[1];
-            this.splineBasePoints.push(new DragItem(new Point(x, y), new Style('#ffffff', '#ffffff', 5, false)));
+            this.splineBasePoints.push(new DragItem(new Point(x, y), {
+                strokeColor: '#ffffff',
+                fillColor: '#ffffff',
+                lineWidth: 5
+            }));
         });
         this.path = new Path();
         this.updatePath();
-        this.targets = [new ContentTile(new Point(125, 800), "This Is Test")];
+        this.targets = [new ContentTile(new Point(125, 800), "Content 1"), new ContentTile(new Point(1400, 200), "Content 2")];
     }
 
     private updatePath() {
@@ -195,17 +209,49 @@ export class InteractiveBackground {
         let positiveOffset = generateOffsetCurvePositive(this.path.getPoints(), 10 * scaleFactor);
 
         drawCurve(context, this.path.getPoints(),
-            new Style('#d4a373','#ffffff',  45 * scaleFactor, true, 2 * scaleFactor, '#B7BF9C', 5 * scaleFactor, 5 * scaleFactor));
+            {
+                strokeColor: '#d4a373',
+                fillColor: '#ffffff',
+                lineWidth: 45 * scaleFactor,
+                shadowBlur: 2 * scaleFactor,
+                shadowColor: '#B7BF9C',
+                shadowOffsetX: 5 * scaleFactor,
+                shadowOffsetY: 5 * scaleFactor
+            });
         for (let i: number = 1; i < negativeOffset.length; i++) {
             if (i % (Math.floor(20 * scaleFactor)) === 0) {
                 drawCurve(context, [negativeOffset[i], positiveOffset[i]],
-                    new Style('#faedcd', '#ffffff', 10 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+                    {
+                        strokeColor: '#faedcd',
+                        fillColor: '#ffffff',
+                        lineWidth: 10 * scaleFactor,
+                        shadowBlur: 2 * scaleFactor,
+                        shadowColor: '#4a4e69',
+                        shadowOffsetX: 1 * scaleFactor,
+                        shadowOffsetY: 1 * scaleFactor
+                    });
             }
         }
         drawCurve(context, negativeOffset,
-            new Style('#432818', '#ffffff', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            {
+                strokeColor: '#432818',
+                fillColor: '#ffffff',
+                lineWidth: 5 * scaleFactor,
+                shadowBlur: 2 * scaleFactor,
+                shadowColor: '#4a4e69',
+                shadowOffsetX: 1 * scaleFactor,
+                shadowOffsetY: 1 * scaleFactor
+            });
         drawCurve(context, positiveOffset,
-            new Style('#432818', '#ffffff', 5 * scaleFactor, true, 2 * scaleFactor, '#4a4e69', 1 * scaleFactor, 1 * scaleFactor));
+            {
+                strokeColor: '#432818',
+                fillColor: '#ffffff',
+                lineWidth: 5 * scaleFactor,
+                shadowBlur: 2 * scaleFactor,
+                shadowColor: '#4a4e69',
+                shadowOffsetX: 1 * scaleFactor,
+                shadowOffsetY: 1 * scaleFactor
+            });
         this.shouldRedrawRails = false;
         this.targets.forEach((target) => {
             target.draw(context);
@@ -222,76 +268,100 @@ export class InteractiveBackground {
         this.updatePath();
     }
 
-    handlePointerDown(pointerPosition: Point) {
-        for (let dragItem of this.splineBasePoints) {
-            if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius) {
-                this.activeDragPoint.push(dragItem);
-                this.targets.forEach((target) => {
-                    target.setHightlightMode(HighlightMode.Light);
-                });
+    // findNearestPointIn(stack: Point[], )
+
+    private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
+        let nearestBasePoint = this.splineBasePoints[0];
+        let shortestDistance = 9999;
+
+        for (const target of this.targets) {
+            if (target.getDragTargetCenter().distanceTo(pointerPosition) < 64) {
+                this.splineBasePoints.forEach((basePoint) => {
+                    let distanceToTarget = basePoint.center.distanceTo(target.getDragTargetCenter());
+                    if (distanceToTarget < shortestDistance) {
+                        nearestBasePoint = basePoint;
+                        shortestDistance = distanceToTarget;
+                    }
+                })
+                nearestBasePoint.setCenter(target.getDragTargetCenter());
             }
         }
-        console.log("clicked: " + pointerPosition);
-    if (this.isBeingDragged() == false){
-            for (const target of this.targets) {
-                console.log("target on pos: " + target.getDragTargetCenter());
-                if (target.getDragTargetCenter().distanceTo(pointerPosition) < 64){
-                    console.log("clicked at target on pos: " + pointerPosition);
-                    let nearestBasePoint = this.splineBasePoints[0];
-                    let shortestDistance = 999999;
-                    this.splineBasePoints.forEach((basePoint) => {
-                        let distanceToTarget = basePoint.center.distanceTo(target.getDragTargetCenter());
-                        if (distanceToTarget < shortestDistance){
-                            nearestBasePoint = basePoint;
-                            shortestDistance = distanceToTarget;
-                        }
-                    })
-                    nearestBasePoint.setCenter(target.getDragTargetCenter());
-                }
+    }
+
+    private selectBasePointToDrag(pointerPosition: Point) {
+        for (let dragItem of this.splineBasePoints) {
+            if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius)
+                this.activeDragPoint.push(dragItem);
+        }
+    }
+
+    private setTargetHightlightMode(highlightMode: HighlightMode) {
+        this.targets.forEach((target) => {
+            target.setHightlightMode(highlightMode);
+        });
+    }
+
+    private autopilotToSelectedTarget(pointerPosition: Point) {
+        let newDirection = Direction.Idle;
+        for (const target of this.targets) {
+            const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
+            if (distance < this.activeDragPoint[0].radius * 2) {
+                newDirection = Direction.FastForward;
             }
+        }
+        this.autoPilotMode = newDirection;
+    }
+
+    handlePointerDown(pointerPosition: Point) {
+        this.selectBasePointToDrag(pointerPosition);
+        console.log("clicked: " + pointerPosition);
+        if (this.isBeingDragged() == false) {
+            this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
         }
     }
 
     handlePointerUp(pointerPosition: Point) {
         if (this.isBeingDragged()) {
             this.updatePath();
-            this.targets.forEach((target) => {
-                target.setHightlightMode(HighlightMode.None);
-            });
-            for (const target of this.targets) {
-                const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-                if (distance < this.activeDragPoint[0].radius * 2) {
-                    this.autoPilotMode = Direction.FastForward;
-                }
-            }
+            this.setTargetHightlightMode(HighlightMode.None);
+            this.autopilotToSelectedTarget(pointerPosition);
             this.activeDragPoint.pop();
-            if (this.autoPilotMode !== Direction.FastForward)
-                this.autoPilotMode = Direction.Idle;
             console.log(this.path.basePoints);
         }
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
+        console.log("moved: " + pointerPosition);
         if (this.isBeingDragged()) {
-            for (const splineBasePoint of this.splineBasePoints) {
-                const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
-                const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
-                if (oldDistance > 0 && newDistance < this.activeDragPoint[0].radius * 2.5)
-                    return;
-            }
-            for (const target of this.targets) {
-                const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-                if (distance < this.activeDragPoint[0].radius * 2){
-                    this.activeDragPoint[0].setCenter(target.getDragTargetCenter());
-                    target.setHightlightMode(HighlightMode.Full);
-                    return;
-                }
-                else
-                    target.setHightlightMode(HighlightMode.Light);
-            }
-
+            if (this.isTouchingAnotherSplineBasePoint(pointerPosition))
+                return;
+            this.setTargetHightlightMode(HighlightMode.Light);
+            this.getTargetsUnderPointer(pointerPosition).forEach((target) => {
+                pointerPosition = target.getDragTargetCenter();
+                target.setHightlightMode(HighlightMode.Full);
+            });
             this.activeDragPoint[0].setCenter(pointerPosition);
         }
+    }
+
+    private getTargetsUnderPointer(pointerPosition: Point): ContentTile[] {
+        for (const target of this.targets) {
+            const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
+            if (distance < this.activeDragPoint[0].radius * 2) {
+                return [target];
+            }
+        }
+        return [];
+    }
+
+    private isTouchingAnotherSplineBasePoint(pointerPosition: Point) {
+        for (const splineBasePoint of this.splineBasePoints) {
+            const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
+            const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
+            if (oldDistance > 0 && newDistance < this.activeDragPoint[0].radius * 2.5)
+                return true;
+        }
+        return false;
     }
 
     isBeingDragged() {
@@ -311,7 +381,7 @@ function drawCurve(context: CanvasRenderingContext2D, curve: number[][], style: 
     }
     context.strokeStyle = style.strokeColor;
     context.lineWidth = style.lineWidth;
-    if (style.hasShadow) {
+    if (style.shadowBlur) {
         context.shadowBlur = style.shadowBlur as number;
         context.shadowColor = style.shadowColor as string;
         context.shadowOffsetY = style.shadowOffsetY as number;
