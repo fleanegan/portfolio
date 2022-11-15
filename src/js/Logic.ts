@@ -2,15 +2,22 @@ import {drawBackground, InteractiveBackground} from "./Background";
 import {Direction, Locomotive} from "./Locomotive";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
+import {DetailedContentView} from "./DetailedContentView";
 
 export class Logic {
     private rails: InteractiveBackground;
     private background: ImageData;
     private locomotive: Locomotive;
     private scalefactor: number;
+    private detailedContentView: DetailedContentView;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
-        this.rails = new InteractiveBackground([[927, 198], [528, 222], [526, 549], [1198, 839], [1580, 829], [1540, 468], [1206, 439]]);
+        this.detailedContentView = new DetailedContentView();
+        this.init();
+    }
+
+    private init() {
+        this.rails = new InteractiveBackground([[Scaler.x(927), Scaler.y(198)], [Scaler.x(528), Scaler.y(222)], [Scaler.x(526), Scaler.y(549)], [Scaler.x(1198), Scaler.y(839)], [Scaler.x(1580), Scaler.y(829)], [Scaler.x(1540), Scaler.y(468)], [Scaler.x(1206), Scaler.y(439)]]);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
@@ -35,6 +42,8 @@ export class Logic {
         this.updateLocomotiveDirection(pressedKeys);
         if (this.locomotive.hasReachedDestination()) {
             // window.open("https://www.tagesschau.de", "_self");
+            this.detailedContentView.show();
+            this.init();
         }
         this.locomotive.move();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);

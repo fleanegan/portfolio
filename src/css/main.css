@@ -9,5 +9,6 @@ html, body {
 
 canvas {
     -webkit-tap-highlight-color: transparent;
+    z-index: 1;
 }
 
