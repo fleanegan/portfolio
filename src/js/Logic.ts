@@ -17,7 +17,9 @@ export class Logic {
     }
 
     private init() {
-        this.rails = new InteractiveBackground([[Scaler.x(927), Scaler.y(198)], [Scaler.x(528), Scaler.y(222)], [Scaler.x(526), Scaler.y(549)], [Scaler.x(1198), Scaler.y(839)], [Scaler.x(1580), Scaler.y(829)], [Scaler.x(1540), Scaler.y(468)], [Scaler.x(1206), Scaler.y(439)]]);
+        this.rails = new InteractiveBackground([
+            [1500.4928366762176, 147.263644773358],[218.0859598853868, 98.17576318223867],[219.621776504298, 545.5448658649399],[804.7679083094556, 565.626271970398],[932.2406876790831, 1077.7021276595744],[1541.9598853868195, 1054.2738205365406],[1528.1375358166188, 557.8168362627197]
+        ]);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
@@ -53,7 +55,7 @@ export class Logic {
     }
 
     updateLocomotiveDirection(pressedKeys: Set<string>) {
-        if (this.rails.autopilotDestination == null) {
+        if (this.locomotive.autopilotDestinationAsProgress == null) {
             if (pressedKeys.has('ArrowRight'))
                 this.locomotive.setDirection(Direction.Forward);
             else if (pressedKeys.has('ArrowLeft'))
@@ -61,7 +63,7 @@ export class Logic {
             if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft') && this.locomotive.direction != Direction.Auto)
                 this.locomotive.setDirection(Direction.Idle);
         } else {
-            console.log("auto");
+            console.log("starting autopilot");
             this.locomotive.setDirection(Direction.Auto);
         }
     }
@@ -77,7 +79,7 @@ export class Logic {
     }
 
     handlePointerUp(pointerPosition: Point) {
-        if (this.rails.isBeingDragged()) {
+        if (this.rails.isPathDragged() || this.rails.isNearTarget(pointerPosition)) {
             this.rails.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }

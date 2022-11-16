@@ -17,7 +17,7 @@ export class Locomotive {
     private img: HTMLImageElement;
     private velocity = 0;
     private autopilotVelocity: number = 0;
-    private autopilotDestinationAsProgress: number | null = null;
+    autopilotDestinationAsProgress: number | null = null;
     direction: Direction = Direction.Idle;
 
     constructor(public path: Path, private length: number) {

@@ -24,8 +24,8 @@ export class DetailedContentView {
             "    flex-direction: column;" +
             "    justify-content: center;" +
             "    gap: 0.4rem;" +
-            "    min-width: 80%;" +
-            "    max-width: 90%;" +
+            "    min-width: 650px;" +
+            "    max-width: 80%;" +
             "    padding: 1.3rem;" +
             "    min-height: 80%;" +
             "    position: absolute;" +
@@ -35,6 +35,11 @@ export class DetailedContentView {
             // "    border-radius: 15px;" +
         "    border: 1px solid #ddd;"
         );
+        if (window.innerWidth <= 650){
+            div.style.minWidth = "100%";
+            console.log("wuhi\n\n\n\n")
+        }
+
         document.body.appendChild(div);
         div.parentElement.style.display = "flex";
         div.parentElement.style.justifyContent = "center";

@@ -21,7 +21,7 @@ enum HighlightMode {
 }
 
 export class DragItem extends GameObject {
-    radius: number = 32;
+    static radius: number = 32;
     public isHightlighted: HighlightMode = HighlightMode.None;
 
     constructor(center: Point, private normalStyle: Style, private hightlightStyle?: Style, private highlightStyle2?: Style) {
@@ -29,7 +29,7 @@ export class DragItem extends GameObject {
     }
 
     draw(context: CanvasRenderingContext2D) {
-        const radius = this.radius;
+        const radius = DragItem.radius;
         const style = this.getStyle();
 
         context.beginPath();
@@ -160,8 +160,8 @@ export class InteractiveBackground {
 
     constructor(points: number[][]) {
         points.forEach((point) => {
-            const x = point[0];
-            const y = point[1];
+            const x = Scaler.x(point[0]);
+            const y = Scaler.y(point[1]);
             this.splineBasePoints.push(new DragItem(new Point(x, y), {
                 strokeColor: '#ffffff',
                 fillColor: '#ffffff',
@@ -193,7 +193,7 @@ export class InteractiveBackground {
     public draw(context: CanvasRenderingContext2D): void {
         if (this.shouldRedrawRails)
             this.drawRails(context);
-        if (this.isBeingDragged()) {
+        if (this.isPathDragged()) {
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);
             });
@@ -268,29 +268,61 @@ export class InteractiveBackground {
         this.updatePath();
     }
 
+    handlePointerDown(pointerPosition: Point) {
+        this.selectBasePointToDrag(pointerPosition);
+    }
+
+    handlePointerUp(pointerPosition: Point) {
+        if (this.isNearTarget(pointerPosition)) {
+            this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
+            this.updatePath();
+        }
+        if (this.isPathDragged()) {
+            this.updatePath();
+            this.setTargetHightlightMode(HighlightMode.None);
+            this.autopilotToSelectedTarget(pointerPosition);
+            this.activeDragPoint.pop();
+            this.printBasePointCoordinates();
+        }
+    }
+
+    handlePointerPressedMove(pointerPosition: Point) {
+        if (this.isPathDragged()) {
+            if (this.isTouchingAnotherSplineBasePoint(pointerPosition))
+                return;
+            this.setTargetHightlightMode(HighlightMode.Light);
+            this.snapPointerToTargetIfNear(pointerPosition);
+        }
+    }
+
+    private autopilotToSelectedTarget(pointerPosition: Point) {
+        const target: ContentTile[] = this.getTargetsUnderPointer(pointerPosition);
+        if (target.length != 0)
+            this.autopilotDestination = target[0].getDragTargetCenter();
+    }
+
     private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
         let nearestBasePoint = this.splineBasePoints[0];
         let shortestDistance = Number.MAX_SAFE_INTEGER;
+        const targets: ContentTile[] = this.getTargetsUnderPointer(pointerPosition);
 
-        for (const target of this.targets) {
-            if (pointerPosition.distanceTo(target.getDragTargetCenter()) < 64) {
-                this.splineBasePoints.forEach((basePoint) => {
-                    let distanceToTarget = basePoint.center.distanceTo(target.getDragTargetCenter());
+        if (targets.length != 0) {
+            this.splineBasePoints.forEach((basePoint) => {
+                let distanceToTarget = basePoint.center.distanceTo(targets[0].getDragTargetCenter());
 
-                    if (distanceToTarget < shortestDistance) {
-                        nearestBasePoint = basePoint;
-                        shortestDistance = distanceToTarget;
-                    }
-                })
-                nearestBasePoint.setCenter(target.getDragTargetCenter());
-                this.autopilotDestination = target.getDragTargetCenter();
-            }
+                if (distanceToTarget < shortestDistance) {
+                    nearestBasePoint = basePoint;
+                    shortestDistance = distanceToTarget;
+                }
+            })
+            nearestBasePoint.setCenter(targets[0].getDragTargetCenter());
+            this.autopilotDestination = targets[0].getDragTargetCenter();
         }
     }
 
     private selectBasePointToDrag(pointerPosition: Point) {
         for (let dragItem of this.splineBasePoints) {
-            if (dragItem.center.distanceTo(pointerPosition) < this.splineBasePoints[0].radius)
+            if (dragItem.center.distanceTo(pointerPosition) < DragItem.radius)
                 this.activeDragPoint.push(dragItem);
         }
     }
@@ -301,49 +333,28 @@ export class InteractiveBackground {
         });
     }
 
-    private autopilotToSelectedTarget(pointerPosition: Point) {
-        let newDirection = Direction.Idle;
-
-        for (const target of this.targets) {
-            const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-            if (distance < this.activeDragPoint[0].radius * 2) {
-                newDirection = Direction.FastForward;
-            }
-        }
+    private printBasePointCoordinates() {
+        let print: string = "[";
+        this.path.basePoints.forEach((basePoint) => {
+            print += '[' + basePoint[0] / Scaler.x(1) + ', ' + basePoint[1] / Scaler.y(1) + '],';
+        })
+        print += "]";
+        console.log(print);
     }
 
-    handlePointerDown(pointerPosition: Point) {
-        this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
-        this.selectBasePointToDrag(pointerPosition);
-    }
-
-    handlePointerUp(pointerPosition: Point) {
-        if (this.isBeingDragged()) {
-            this.updatePath();
-            this.setTargetHightlightMode(HighlightMode.None);
-            this.autopilotToSelectedTarget(pointerPosition);
-            this.activeDragPoint.pop();
-            console.log(this.path.basePoints);
-        }
-    }
-
-    handlePointerPressedMove(pointerPosition: Point) {
-        if (this.isBeingDragged()) {
-            if (this.isTouchingAnotherSplineBasePoint(pointerPosition))
-                return;
-            this.setTargetHightlightMode(HighlightMode.Light);
-            this.getTargetsUnderPointer(pointerPosition).forEach((target) => {
-                pointerPosition = target.getDragTargetCenter();
-                target.setHightlightMode(HighlightMode.Full);
-            });
-            this.activeDragPoint[0].setCenter(pointerPosition);
-        }
+    private snapPointerToTargetIfNear(pointerPosition: Point) {
+        this.getTargetsUnderPointer(pointerPosition).forEach((target) => {
+            pointerPosition = target.getDragTargetCenter();
+            target.setHightlightMode(HighlightMode.Full);
+        });
+        this.activeDragPoint[0].setCenter(pointerPosition);
+        return pointerPosition;
     }
 
     private getTargetsUnderPointer(pointerPosition: Point): ContentTile[] {
         for (const target of this.targets) {
             const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-            if (distance < this.activeDragPoint[0].radius * 2) {
+            if (distance < DragItem.radius * 2) {
                 return [target];
             }
         }
@@ -354,14 +365,19 @@ export class InteractiveBackground {
         for (const splineBasePoint of this.splineBasePoints) {
             const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
             const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
-            if (oldDistance > 0 && newDistance < this.activeDragPoint[0].radius * 2.5)
+            if (oldDistance > 0 && newDistance < DragItem.radius * 2.5)
                 return true;
         }
         return false;
     }
 
-    isBeingDragged() {
-        return this.activeDragPoint.length != 0;
+    isPathDragged() {
+        let result: boolean = this.activeDragPoint.length != 0;
+        return result;
+    }
+
+    isNearTarget(point: Point): boolean {
+        return this.getTargetsUnderPointer(point).length != 0;
     }
 }
 
@@ -387,5 +403,6 @@ function drawCurve(context: CanvasRenderingContext2D, curve: number[][], style: 
         context.shadowOffsetY = 0;
         context.shadowOffsetX = 0;
     }
+    context.closePath();
     context.stroke();
 }
