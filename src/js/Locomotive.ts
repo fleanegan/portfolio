@@ -13,16 +13,14 @@ export enum Direction {
 
 export class Locomotive {
     private trainProgress: number = 0.12;
-    private offset: Point;
+    private oldTrainProgress: number = this.trainProgress;
     private img: HTMLImageElement;
     private velocity = 0;
     private autopilotVelocity: number = 0;
     autopilotDestinationAsProgress: number | null = null;
     direction: Direction = Direction.Idle;
-    private oldProg: number = 0;
 
     constructor(public path: Path, private length: number) {
-        this.offset = new Point(0, 0);
         this.img = new Image();
         this.img.src = icon;
     }
@@ -33,9 +31,9 @@ export class Locomotive {
 
         if (this.velocity < 0) {
             newProgress = this.truncateNormalizedPathLength(this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength());
-            oldProgress = this.truncateNormalizedPathLength(this.oldProg + this.getTrainLengthAsNormalizedPathLength());
+            oldProgress = this.truncateNormalizedPathLength(this.oldTrainProgress + this.getTrainLengthAsNormalizedPathLength());
         } else {
-            oldProgress = this.truncateNormalizedPathLength(this.oldProg);
+            oldProgress = this.truncateNormalizedPathLength(this.oldTrainProgress);
             newProgress = this.truncateNormalizedPathLength(this.trainProgress + this.velocity);
         }
         if (this.velocity < 0 && oldProgress < newProgress)
@@ -65,7 +63,7 @@ export class Locomotive {
             }
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
-        this.oldProg = this.trainProgress;
+        this.oldTrainProgress = this.trainProgress;
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
     }
 
@@ -95,20 +93,9 @@ export class Locomotive {
             frontWheels = Point.fromArr(this.path.getPoints()[i])
             i++;
         }
-        result.push(this.localPosToGlobal(rearWheels));
-        result.push(this.localPosToGlobal(frontWheels));
+        result.push(rearWheels);
+        result.push(frontWheels);
         return result;
-    }
-
-    setGlobalOffset(offset: Point) {
-        this.offset = offset;
-    }
-
-    localPosToGlobal(local: Point) {
-        return new Point(
-            Math.round(this.offset.x + local.x),
-            Math.round(this.offset.y + local.y),
-        );
     }
 
     calcIndexRearWheels(): number {
