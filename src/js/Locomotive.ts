@@ -3,11 +3,9 @@ import {getIndexOfClosestValue, Point} from "./mathUtils";
 import icon from '../../assets/locomotive.png'
 
 export enum Direction {
-    FastBackwards = -1.01,
     Backwards = -1,
     Idle = 0,
     Forward = 1,
-    FastForward = 1.01,
     Auto,
 }
 
@@ -85,13 +83,14 @@ export class Locomotive {
         let proportionsWheel = 0.3;
         let indexRearWheels = this.calcIndexRearWheels();
         let rearWheels = Point.fromArr(this.path.getPoints()[indexRearWheels]);
-        let frontWheels = Point.fromArr(this.path.getPoints()[indexRearWheels]);
-        let i: number = this.indexOfFrontWheelsForStraightLine(indexRearWheels, proportionsWheel);
+        let indexFrontWheels: number = this.indexOfFrontWheelsForStraightLine(indexRearWheels, proportionsWheel);
+        let frontWheels = Point.fromArr(this.path.getPoints()[indexFrontWheels]);
 
         while (frontWheels.distanceTo(rearWheels) < this.length * proportionsWheel
-        && i < this.path.getPoints().length) {
-            frontWheels = Point.fromArr(this.path.getPoints()[i])
-            i++;
+        && indexFrontWheels < this.path.getPoints().length) {
+            frontWheels.x = this.path.getPoints()[indexFrontWheels][0]
+            frontWheels.y = this.path.getPoints()[indexFrontWheels][1]
+            indexFrontWheels++;
         }
         result.push(rearWheels);
         result.push(frontWheels);
@@ -102,7 +101,6 @@ export class Locomotive {
         let progressRearWheels = this.truncateNormalizedPathLength(
             this.trainProgress + this.getTrainLengthAsNormalizedPathLength());
         return Math.round(progressRearWheels * this.path.getPoints().length);
-
     }
 
     indexOfFrontWheelsForStraightLine(indexRearWheels: number, proportionsWheelsToLength: number): number {
