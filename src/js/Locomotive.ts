@@ -12,13 +12,14 @@ export enum Direction {
 }
 
 export class Locomotive {
-    private trainProgress: number = 0;
+    private trainProgress: number = 0.12;
     private offset: Point;
     private img: HTMLImageElement;
     private velocity = 0;
     private autopilotVelocity: number = 0;
     autopilotDestinationAsProgress: number | null = null;
     direction: Direction = Direction.Idle;
+    private oldProg: number = 0;
 
     constructor(public path: Path, private length: number) {
         this.offset = new Point(0, 0);
@@ -27,14 +28,21 @@ export class Locomotive {
     }
 
     hasReachedDestination(): boolean{
-        if (this.autopilotVelocity > 0)
-            return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() >= this.autopilotDestinationAsProgress;
-        return this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength() <= this.autopilotDestinationAsProgress;
+        let oldProgress = this.truncateNormalizedPathLength(this.oldProg + this.getTrainLengthAsNormalizedPathLength());
+        let newProgress = this.truncateNormalizedPathLength(this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength());
+
+        if (this.velocity < 0 && oldProgress < newProgress)
+            newProgress -= 1;
+        if (this.velocity > 0 && oldProgress > newProgress)
+            oldProgress -= 1;
+        if ((oldProgress < this.autopilotDestinationAsProgress) != (newProgress <  this.autopilotDestinationAsProgress))
+            return true;
+        return false;
+
     }
 
     move() {
         if (this.direction === Direction.Auto){
-            const old = this.autopilotDestinationAsProgress;
             if (Math.abs(this.velocity) <= Math.abs(this.autopilotVelocity))
                 this.velocity += 0.001 * Math.sign(this.autopilotVelocity);
             if (this.hasReachedDestination()) {
@@ -51,12 +59,19 @@ export class Locomotive {
             }
         }
         let normalizedPathLength = this.trainProgress + this.velocity;
+        this.oldProg = this.trainProgress;
         this.trainProgress = this.truncateNormalizedPathLength(normalizedPathLength);
     }
 
     setDestination(destination: Point) {
         this.autopilotDestinationAsProgress = getIndexOfClosestValue(destination, this.path.getPoints()) / this.path.getPoints().length;
         let difference = this.autopilotDestinationAsProgress - this.trainProgress;
+        if (difference == 0)
+            return ;
+        if (difference > 0.5)
+            difference -= 1;
+        if (difference < -0.5)
+            difference += 1;
         this.autopilotVelocity = difference / 10;
         console.log("auto destination " + destination.x, destination.y);
     }

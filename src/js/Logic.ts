@@ -42,8 +42,8 @@ export class Logic {
 
     process(pressedKeys: Set<string>) {
         this.updateLocomotiveDirection(pressedKeys);
-        if (this.locomotive.hasReachedDestination()) {
-            // window.open("https://www.tagesschau.de", "_self");
+        if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
+            console.log('showing popup');
             this.detailedContentView.show();
             this.init();
         }
@@ -63,7 +63,7 @@ export class Logic {
             if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft') && this.locomotive.direction != Direction.Auto)
                 this.locomotive.setDirection(Direction.Idle);
         } else {
-            console.log("starting autopilot");
+            console.log("starting \n\n\nautopilot\n\n\n");
             this.locomotive.setDirection(Direction.Auto);
         }
     }
