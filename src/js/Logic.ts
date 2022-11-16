@@ -18,7 +18,7 @@ export class Logic {
 
     private init() {
         this.rails = new InteractiveBackground([
-            [1500.4928366762176, 147.263644773358],[218.0859598853868, 98.17576318223867],[219.621776504298, 545.5448658649399],[804.7679083094556, 565.626271970398],[932.2406876790831, 1077.7021276595744],[1541.9598853868195, 1054.2738205365406],[1528.1375358166188, 557.8168362627197]
+            [1500.4928366762176, 147.263644773358],[218.08595988538679, 98.17576318223868],[219.62177650429797, 545.5448658649399],[804.7679083094554, 565.626271970398],[932.2406876790828, 1077.7021276595744],[1541.9598853868195, 1054.2738205365406],[1957.666485605649, 785.3950413223142]
         ]);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
@@ -43,9 +43,7 @@ export class Logic {
     process(pressedKeys: Set<string>) {
         this.updateLocomotiveDirection(pressedKeys);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
-            console.log('showing popup');
             this.detailedContentView.show();
-            this.init();
         }
         this.locomotive.move();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);

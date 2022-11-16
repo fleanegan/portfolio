@@ -85,6 +85,7 @@ export class DetailedContentView {
 
         this.createBlurryOverlay();
         this.createBox();
+        this.hide();
         // createModalpopup();
     }
 
