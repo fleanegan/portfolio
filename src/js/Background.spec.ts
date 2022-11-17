@@ -1,4 +1,4 @@
-import {InteractiveBackground} from "./Background";
+import {Rails} from "./Background";
 import {getIndexOfClosestValue, Point} from "./mathUtils";
 
 describe('Rail', () => {

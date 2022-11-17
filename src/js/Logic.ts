@@ -1,15 +1,18 @@
-import {drawBackground, InteractiveBackground} from "./Background";
+import {drawBackground, Rails} from "./Background";
 import {Direction, Locomotive} from "./Locomotive";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
+import {RailInteractivityHandler} from "./RailInteractivityHandler";
+import {ContentPreview, ContentTile} from "./ContentPreview";
 
 export class Logic {
-    private rails: InteractiveBackground;
+    private rails: Rails;
     private background: ImageData;
     private locomotive: Locomotive;
-    private scalefactor: number;
     private detailedContentView: DetailedContentView;
+    private railInteractivityHandler: RailInteractivityHandler;
+    private contentPreview: ContentPreview;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
         this.detailedContentView = new DetailedContentView();
@@ -17,9 +20,11 @@ export class Logic {
     }
 
     private init() {
-        this.rails = new InteractiveBackground([
+        this.rails = new Rails([
             [1500.4928366762176, 147.263644773358],[218.08595988538679, 98.17576318223868],[219.62177650429797, 545.5448658649399],[804.7679083094554, 565.626271970398],[932.2406876790828, 1077.7021276595744],[1541.9598853868195, 1054.2738205365406],[1957.666485605649, 785.3950413223142]
         ]);
+        this.contentPreview = new ContentPreview();
+        this.railInteractivityHandler = new RailInteractivityHandler(this.rails, this.contentPreview);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
         this.generateStaticBackground();
     }
@@ -31,8 +36,9 @@ export class Logic {
         canvas.width = window.screen.width;
         canvas.height = window.screen.height;
         drawBackground(context, canvas);
-        this.rails.updateZoom();
+        this.railInteractivityHandler.updateZoom();
         this.rails.reDraw(context);
+        this.contentPreview.draw(context);
         this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
 
@@ -51,6 +57,8 @@ export class Logic {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
         this.locomotive.draw(this.context);
+        if (this.rails.shouldRedrawDraggable)
+            this.contentPreview.draw(this.context);
         this.rails.draw(this.context);
     }
 
@@ -69,27 +77,27 @@ export class Logic {
     }
 
     zoom() {
-        this.rails.updateZoom();
+        this.railInteractivityHandler.updateZoom();
         this.locomotive.scaleLength(Scaler.x(1));
         this.generateStaticBackground();
     }
 
     handlePointerDown(pointerPosition: Point) {
-        this.rails.handlePointerDown(pointerPosition);
+        this.railInteractivityHandler.handlePointerDown(pointerPosition);
     }
 
     handlePointerUp(pointerPosition: Point) {
-        if (this.rails.isPathDragged() || this.rails.isNearTarget(pointerPosition)) {
-            this.rails.handlePointerUp(pointerPosition);
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition)) {
+            this.railInteractivityHandler.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }
-        if (this.rails.autopilotDestination != null) {
-            this.locomotive.setDestination(this.rails.autopilotDestination);
-            this.rails.autopilotDestination = null;
+        if (this.railInteractivityHandler.autopilotDestination != null) {
+            this.locomotive.setDestination(this.railInteractivityHandler.autopilotDestination);
+            this.railInteractivityHandler.autopilotDestination = null;
         }
     }
 
     handlePointerPressedMove(pointerPosition: Point) {
-        this.rails.handlePointerPressedMove(pointerPosition);
+        this.railInteractivityHandler.handlePointerPressedMove(pointerPosition);
     }
 }

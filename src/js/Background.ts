@@ -2,9 +2,8 @@ import {CurveInterpolator} from 'curve-interpolator';
 import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {GameObject} from "./GameObject";
-import icon from '../../assets/contentShape.png'
 
-type Style = {
+export type Style = {
     strokeColor: string;
     fillColor: string;
     lineWidth: number;
@@ -14,7 +13,7 @@ type Style = {
     shadowOffsetX?: number;
 }
 
-enum HighlightMode {
+export enum HighlightMode {
     None,
     Light,
     Full
@@ -53,77 +52,6 @@ export class DragItem extends GameObject {
     }
 }
 
-export class ContentTile extends GameObject {
-    private dragTarget: DragItem;
-    private height: number = 350;
-    private width: number = 390;
-    private img: HTMLImageElement;
-
-    constructor(private upperLeft: Point, private title: string) {
-        super(upperLeft);
-        this.img = new Image();
-        this.img.onload = function () {
-            console.log("loaded");
-        }
-        this.img.src = icon;
-        let relativeDragTargetPosition = new Point(upperLeft.x, upperLeft.y);
-        this.dragTarget = new DragItem(relativeDragTargetPosition,
-            {strokeColor: '#ffffff', fillColor: '#ffffff', lineWidth: 5},
-            {strokeColor: '#ff0000', fillColor: '#ffffff', lineWidth: 5},
-            {
-                strokeColor: '#ff0000',
-                fillColor: '#ff0000',
-                lineWidth: 5,
-                shadowBlur: 10,
-                shadowColor: '#ff0000',
-                shadowOffsetX: 0,
-                shadowOffsetY: 0
-            })
-        ;
-    }
-
-    setHightlightMode(targetMode: HighlightMode) {
-        this.dragTarget.isHightlighted = targetMode;
-    }
-
-    getDragTargetCenter(): Point {
-        return this.dragTarget.center;
-    }
-
-    updateZoom() {
-        super.updateZoom();
-        this.dragTarget.updateZoom();
-    }
-
-    draw(context: CanvasRenderingContext2D) {
-        context.drawImage(this.img, this.center.x, this.center.y, Scaler.x(512), Scaler.x(512));
-        context.shadowBlur = 0;
-        this.dragTarget.draw(context);
-        context.shadowBlur = 0;
-        context.shadowOffsetY = 0;
-        context.shadowOffsetX = 0;
-        context.beginPath();
-        context.fillStyle = '#ffffff';
-        context.strokeStyle = '#ffffff';
-        context.lineWidth = 4;
-        context.font = "60px Arial";
-        context.fillText(this.title, this.center.x, this.center.y - 115);
-        context.font = "30px Arial";
-        context.fillText("link zu coolem git repo 1", this.center.x, this.center.y);
-        context.fillText("link zu coolem git repo 2", this.center.x, this.center.y + 45);
-        context.strokeRect(this.center.x - 200 + 202, this.center.y + 425 - 525, 325, 2);
-        context.shadowBlur = 5;
-        context.shadowColor = '#ffffff';
-        context.shadowOffsetY = 2;
-        context.shadowOffsetX = 2;
-        // context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, this.width, this.height);
-        context.stroke();
-        context.shadowBlur = 0;
-        context.shadowOffsetY = 0;
-        context.shadowOffsetX = 0;
-    }
-}
-
 export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     context.fillStyle = '#ccd5ae'
     context.beginPath();
@@ -154,13 +82,11 @@ export class Path {
     }
 }
 
-export class InteractiveBackground {
-    private splineBasePoints: DragItem[] = [];
-    private shouldRedrawRails: boolean;
-    private activeDragPoint: DragItem[] = [];
-    targets: ContentTile[];
+export class Rails {
+    splineBasePoints: DragItem[] = [];
     path: Path;
-    autopilotDestination: Point | null = null;
+    shouldRedrawRails: boolean;
+    shouldRedrawDraggable: boolean = false;
 
     constructor(points: number[][]) {
         points.forEach((point) => {
@@ -173,18 +99,6 @@ export class InteractiveBackground {
             }));
         });
         this.path = new Path();
-        this.updatePath();
-        this.targets = [new ContentTile(new Point(125, 800), "Content 1"), new ContentTile(new Point(1400, 200), "Content 2")];
-    }
-
-    private updatePath() {
-        let tmp: number[][] = [];
-        for (const splineBasePoint of this.splineBasePoints) {
-            splineBasePoint.updateZoom();
-            tmp.push(splineBasePoint.center.toArr());
-        }
-        this.path.interpolate(tmp);
-        this.shouldRedrawRails = true;
     }
 
     public reDraw(context: CanvasRenderingContext2D): void {
@@ -197,12 +111,9 @@ export class InteractiveBackground {
     public draw(context: CanvasRenderingContext2D): void {
         if (this.shouldRedrawRails)
             this.drawRails(context);
-        if (this.isPathDragged()) {
+        if (this.shouldRedrawDraggable) {
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);
-            });
-            this.targets.forEach((target) => {
-                target.draw(context);
             });
         }
     }
@@ -257,131 +168,6 @@ export class InteractiveBackground {
                 shadowOffsetY: 1 * scaleFactor
             });
         this.shouldRedrawRails = false;
-        this.targets.forEach((target) => {
-            target.draw(context);
-        });
-    }
-
-    updateZoom() {
-        this.splineBasePoints.forEach((item) => {
-            item.updateZoom();
-        });
-        this.targets.forEach((target) => {
-            target.updateZoom();
-        })
-        this.updatePath();
-    }
-
-    handlePointerDown(pointerPosition: Point) {
-        this.selectBasePointToDrag(pointerPosition);
-    }
-
-    handlePointerUp(pointerPosition: Point) {
-        if (this.isNearTarget(pointerPosition)) {
-            this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
-            this.updatePath();
-        }
-        if (this.isPathDragged()) {
-            this.updatePath();
-            this.setTargetHightlightMode(HighlightMode.None);
-            this.autopilotToSelectedTarget(pointerPosition);
-            this.activeDragPoint.pop();
-            this.printBasePointCoordinates();
-        }
-    }
-
-    handlePointerPressedMove(pointerPosition: Point) {
-        if (this.isPathDragged()) {
-            if (this.isTouchingAnotherSplineBasePoint(pointerPosition))
-                return;
-            this.setTargetHightlightMode(HighlightMode.Light);
-            this.snapPointerToTargetIfNear(pointerPosition);
-        }
-    }
-
-    private autopilotToSelectedTarget(pointerPosition: Point) {
-        const target: ContentTile[] = this.getTargetsUnderPointer(pointerPosition);
-        if (target.length != 0)
-            this.autopilotDestination = target[0].getDragTargetCenter();
-    }
-
-    private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
-        let nearestBasePoint = this.splineBasePoints[0];
-        let shortestDistance = Number.MAX_SAFE_INTEGER;
-        const targets: ContentTile[] = this.getTargetsUnderPointer(pointerPosition);
-
-        if (targets.length != 0) {
-            this.splineBasePoints.forEach((basePoint) => {
-                let distanceToTarget = basePoint.center.distanceTo(targets[0].getDragTargetCenter());
-
-                if (distanceToTarget < shortestDistance) {
-                    nearestBasePoint = basePoint;
-                    shortestDistance = distanceToTarget;
-                }
-            })
-            nearestBasePoint.setCenter(targets[0].getDragTargetCenter());
-            this.autopilotDestination = targets[0].getDragTargetCenter();
-        }
-    }
-
-    private selectBasePointToDrag(pointerPosition: Point) {
-        for (let dragItem of this.splineBasePoints) {
-            if (dragItem.center.distanceTo(pointerPosition) < DragItem.radius)
-                this.activeDragPoint.push(dragItem);
-        }
-    }
-
-    private setTargetHightlightMode(highlightMode: HighlightMode) {
-        this.targets.forEach((target) => {
-            target.setHightlightMode(highlightMode);
-        });
-    }
-
-    private printBasePointCoordinates() {
-        let print: string = "[";
-        this.path.basePoints.forEach((basePoint) => {
-            print += '[' + basePoint[0] / Scaler.x(1) + ', ' + basePoint[1] / Scaler.y(1) + '],';
-        })
-        print += "]";
-        console.log(print);
-    }
-
-    private snapPointerToTargetIfNear(pointerPosition: Point) {
-        this.getTargetsUnderPointer(pointerPosition).forEach((target) => {
-            pointerPosition = target.getDragTargetCenter();
-            target.setHightlightMode(HighlightMode.Full);
-        });
-        this.activeDragPoint[0].setCenter(pointerPosition);
-        return pointerPosition;
-    }
-
-    private getTargetsUnderPointer(pointerPosition: Point): ContentTile[] {
-        for (const target of this.targets) {
-            const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-            if (distance < DragItem.radius * 2) {
-                return [target];
-            }
-        }
-        return [];
-    }
-
-    private isTouchingAnotherSplineBasePoint(pointerPosition: Point) {
-        for (const splineBasePoint of this.splineBasePoints) {
-            const oldDistance = splineBasePoint.center.distanceTo(this.activeDragPoint[0].center);
-            const newDistance = splineBasePoint.center.distanceTo(pointerPosition);
-            if (oldDistance > 0 && newDistance < DragItem.radius * 2.5)
-                return true;
-        }
-        return false;
-    }
-
-    isPathDragged() {
-        let result: boolean = this.activeDragPoint.length != 0;
-        return result;
-    }
-
-    isNearTarget(point: Point): boolean {
-        return this.getTargetsUnderPointer(point).length != 0;
     }
 }
 
