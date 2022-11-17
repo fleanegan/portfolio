@@ -12,3 +12,6 @@ canvas {
     z-index: 1;
 }
 
+.modal {
+    color: red;
+}

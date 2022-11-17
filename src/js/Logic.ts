@@ -37,8 +37,8 @@ export class Logic {
         canvas.height = window.screen.height;
         drawBackground(context, canvas);
         this.railInteractivityHandler.updateZoom();
-        this.rails.reDraw(context);
         this.contentPreview.draw(context);
+        this.rails.reDraw(context);
         this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
 
@@ -54,9 +54,7 @@ export class Logic {
             this.detailedContentView.show();
         }
         this.locomotive.move();
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
-        this.contentPreview.draw(this.context);
         this.locomotive.draw(this.context);
         this.rails.draw(this.context);
     }

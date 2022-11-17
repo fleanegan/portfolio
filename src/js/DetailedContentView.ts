@@ -21,12 +21,13 @@ export class DetailedContentView {
 
     createBox() {
         let modalBox = document.createElement("DIV");
+        modalBox.setAttribute("class", "modal");
         modalBox.setAttribute("style", "display: flex;" +
             "    flex-direction: column;" +
             "    background-color: #fdfffc;" +
             "    justify-content: right;" +
             "    gap: 0.4rem;" +
-            "    min-width: 650px;" +
+            // "    min-width: 650px;" +
             "    max-width: 80%;" +
             "    max-height: 80%;" +
             "    padding: 1.3rem;" +
