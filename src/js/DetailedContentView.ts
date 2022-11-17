@@ -20,8 +20,8 @@ export class DetailedContentView {
     }
 
     createBox() {
-        let div = document.createElement("DIV");
-        div.setAttribute("style", "display: flex;" +
+        let modalBox = document.createElement("DIV");
+        modalBox.setAttribute("style", "display: flex;" +
             "    flex-direction: column;" +
             "    background-color: #fdfffc;" +
             "    justify-content: right;" +
@@ -34,7 +34,7 @@ export class DetailedContentView {
             "    overflow-y: auto;" +
             "    position: absolute;" +
             "    top: 10%;" +
-            "box-shadow: 0px 0px 18px 4px rgba(0,0,0,0.59);" +
+            "box-shadow: 0px 0px 10px 2px rgba(255,255,255,0.39);" +
             "    z-index: 2;" +
             // "    border-radius: 15px;" +
             "    border: 1px solid #ddd;"
@@ -60,11 +60,24 @@ export class DetailedContentView {
             " clear: both;" +
             " float:right;" +
             "font-size:4ref;");
-        div.appendChild(newcloseButton);
+        modalBox.appendChild(newcloseButton);
         newcloseButton.addEventListener("click", () => {
             this.hide();
         });
-        div.insertAdjacentHTML(
+        let contentHolder = document.createElement("DIV");
+        contentHolder.setAttribute("style", "display: flex;" +
+            "    flex-direction: column;" +
+            "    justify-content: left;" +
+            "    gap: 0.4rem;" +
+            "    width: 100%;" +
+            "    height: 80%;" +
+            "    padding: 64px 0 0 0;" +
+            "    overflow-y: auto;" +
+            "    top: 10%;" +
+            "    z-index: 2;"
+        );
+        modalBox.appendChild(contentHolder);
+        contentHolder.insertAdjacentHTML(
             'beforeend',
             `<html><head>
 <title>dummy html document</title>
@@ -287,14 +300,14 @@ url: <a href="http://www.cs.unc.edu/~jbs">http://www.cs.unc.edu/~jbs</a>
 </nobr></body></html>`,
         );
         if (window.innerWidth <= 650) {
-            div.style.minWidth = "100%";
+            modalBox.style.minWidth = "100%";
             console.log("wuhi\n\n\n\n")
         }
 
-        document.body.appendChild(div);
-        div.parentElement.style.display = "flex";
-        div.parentElement.style.justifyContent = "center";
-        this.elements.push(div);
+        document.body.appendChild(modalBox);
+        modalBox.parentElement.style.display = "flex";
+        modalBox.parentElement.style.justifyContent = "center";
+        this.elements.push(modalBox);
     }
 
     private elements: HTMLElement[] = [];

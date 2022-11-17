@@ -13,6 +13,9 @@ module.exports = {
     devServer: {
         static: './dist'
     },
+    performance: {
+        hints: false
+    },
     module: {
         rules: [
             {

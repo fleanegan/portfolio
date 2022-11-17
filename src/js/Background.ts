@@ -1,8 +1,8 @@
 import {CurveInterpolator} from 'curve-interpolator';
 import {generateOffsetCurveNegative, generateOffsetCurvePositive, Point} from "./mathUtils";
 import {Scaler} from "./utils";
-import {Direction} from "./Locomotive";
 import {GameObject} from "./GameObject";
+import icon from '../../assets/contentShape.png'
 
 type Style = {
     strokeColor: string;
@@ -57,10 +57,16 @@ export class ContentTile extends GameObject {
     private dragTarget: DragItem;
     private height: number = 350;
     private width: number = 390;
+    private img: HTMLImageElement;
 
     constructor(private upperLeft: Point, private title: string) {
         super(upperLeft);
-        let relativeDragTargetPosition = new Point(upperLeft.x + 300, upperLeft.y + 125);
+        this.img = new Image();
+        this.img.onload = function () {
+            console.log("loaded");
+        }
+        this.img.src = icon;
+        let relativeDragTargetPosition = new Point(upperLeft.x, upperLeft.y);
         this.dragTarget = new DragItem(relativeDragTargetPosition,
             {strokeColor: '#ffffff', fillColor: '#ffffff', lineWidth: 5},
             {strokeColor: '#ff0000', fillColor: '#ffffff', lineWidth: 5},
@@ -84,7 +90,13 @@ export class ContentTile extends GameObject {
         return this.dragTarget.center;
     }
 
+    updateZoom() {
+        super.updateZoom();
+        this.dragTarget.updateZoom();
+    }
+
     draw(context: CanvasRenderingContext2D) {
+        context.drawImage(this.img, this.center.x, this.center.y, Scaler.x(512), Scaler.x(512));
         context.shadowBlur = 0;
         this.dragTarget.draw(context);
         context.shadowBlur = 0;
@@ -104,7 +116,7 @@ export class ContentTile extends GameObject {
         context.shadowColor = '#ffffff';
         context.shadowOffsetY = 2;
         context.shadowOffsetX = 2;
-        context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, this.width, this.height);
+        // context.strokeRect(this.center.x - 200 + 175, this.center.y + 425 - 600, this.width, this.height);
         context.stroke();
         context.shadowBlur = 0;
         context.shadowOffsetY = 0;
@@ -129,14 +141,6 @@ export class Path {
 
     pxToNormalized(px: number): number {
         return px / this.interpolator.length;
-    }
-
-    getInterpolatedTrainPosition(normalizedInput: number): Point {
-        if (normalizedInput < 0 || normalizedInput > 1)
-            throw new Error("input from zero to one expected, got " + normalizedInput)
-        let tmp = this.interpolator.getPointAt(normalizedInput) as number[];
-
-        return new Point(tmp[0], tmp[1]);
     }
 
     interpolate(basePoints: number[][]) {
