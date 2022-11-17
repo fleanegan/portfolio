@@ -41,6 +41,8 @@ export class Logic {
     }
 
     process(pressedKeys: Set<string>) {
+        if (this.detailedContentView.isHidden() == false)
+            return;
         this.updateLocomotiveDirection(pressedKeys);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
             this.detailedContentView.show();

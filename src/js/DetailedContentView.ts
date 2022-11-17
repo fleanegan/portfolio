@@ -311,23 +311,30 @@ url: <a href="http://www.cs.unc.edu/~jbs">http://www.cs.unc.edu/~jbs</a>
     }
 
     private elements: HTMLElement[] = [];
+    private isHiddenFlag: boolean;
 
     constructor() {
         this.createBlurryOverlay();
         this.createBox();
-        // this.hide();
+        this.hide();
         // createModalpopup();
+    }
+
+    isHidden(): boolean{
+        return this.isHiddenFlag;
     }
 
     hide() {
         this.elements.forEach((element) => {
             element.style.display = "none";
-        })
+        });
+        this.isHiddenFlag = true;
     }
 
     show() {
         this.elements.forEach((element) => {
             element.style.display = "block";
-        })
+        });
+        this.isHiddenFlag = false;
     }
 }
