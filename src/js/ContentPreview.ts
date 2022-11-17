@@ -11,10 +11,10 @@ export class ContentPreview{
         this.targets = [new ContentTile(new Point(125, 800), "Content 1"), new ContentTile(new Point(1400, 200), "Content 2")];
     }
 
-    draw(context: CanvasRenderingContext2D){
-        this.targets.forEach((target) => {
-            target.draw(context);
-        });
+    async draw(context: CanvasRenderingContext2D) {
+        for (const target of this.targets) {
+            await target.draw(context);
+        }
     }
 
     updateZoom() {
@@ -49,9 +49,6 @@ export class ContentTile extends GameObject {
     constructor(private upperLeft: Point, private title: string) {
         super(upperLeft);
         this.img = new Image();
-        this.img.onload = function () {
-            console.log("loaded");
-        }
         this.img.src = icon;
         let relativeDragTargetPosition = new Point(this.center.x + Scaler.x(this.width) * 0.85, this.center.y + Scaler.y(this.height) * 0.85);
         this.dragTarget = new DragItem(relativeDragTargetPosition,
@@ -82,8 +79,16 @@ export class ContentTile extends GameObject {
         this.dragTarget.setCenter(new Point(this.center.x + Scaler.x(this.width) * 0.85, this.center.y + Scaler.y(this.height) * 0.85));
     }
 
-    draw(context: CanvasRenderingContext2D) {
-        context.drawImage(this.img, this.center.x - Scaler.x(512) /10, this.center.y - Scaler.y(512) /7, Scaler.x(512), Scaler.y(512));
+    async draw(context: CanvasRenderingContext2D) {
+        const x = this.center.x - Scaler.x(512) / 10;
+        const y = this.center.y - Scaler.y(512) / 7;
+        const w = Scaler.x(512);
+        const h = Scaler.y(512);
+        await new Promise(r => {
+            this.img.onload = r;
+            this.img.src = icon;
+        });
+        context.drawImage(this.img, x, y, w, h);
         this.dragTarget.draw(context);
     }
 }

@@ -12,8 +12,9 @@ class App {
 		this._game = game;
 	}
 
-	public setup(): void {
+	public async setup() {
 		// Any setup that is required that only runs once before game loads goes here
+		await this._game.init();
 		this.gameLoop();
 	}
 

@@ -74,4 +74,8 @@ export default class Game {
             this.drawingState.pressedKeys.has('ArrowRight') ||
             this.drawingState.pressedKeys.has('ArrowLeft');
     }
+
+    async init() {
+        await this.logic.init();
+    }
 }

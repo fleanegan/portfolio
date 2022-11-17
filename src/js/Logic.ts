@@ -16,20 +16,19 @@ export class Logic {
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
         this.detailedContentView = new DetailedContentView();
-        this.init();
     }
 
-    private init() {
+    async init() {
         this.rails = new Rails([
-            [1500.4928366762176, 147.263644773358],[218.08595988538679, 98.17576318223868],[219.62177650429797, 545.5448658649399],[804.7679083094554, 565.626271970398],[932.2406876790828, 1077.7021276595744],[1541.9598853868195, 1054.2738205365406],[1957.666485605649, 785.3950413223142]
+            [1500.4928366762176, 147.263644773358], [218.08595988538679, 98.17576318223868], [219.62177650429797, 545.5448658649399], [804.7679083094554, 565.626271970398], [932.2406876790828, 1077.7021276595744], [1541.9598853868195, 1054.2738205365406], [1957.666485605649, 785.3950413223142]
         ]);
         this.contentPreview = new ContentPreview();
         this.railInteractivityHandler = new RailInteractivityHandler(this.rails, this.contentPreview);
         this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
-        this.generateStaticBackground();
+        await this.generateStaticBackground();
     }
 
-    private generateStaticBackground(): void {
+    private async generateStaticBackground() {
         let canvas = document.createElement('canvas')
         let context = canvas.getContext('2d');
 
@@ -37,7 +36,7 @@ export class Logic {
         canvas.height = window.screen.height;
         drawBackground(context, canvas);
         this.railInteractivityHandler.updateZoom();
-        this.contentPreview.draw(context);
+        await this.contentPreview.draw(context);
         this.rails.reDraw(context);
         this.background = context.getImageData(0, 0, canvas.width, canvas.height);
     }
