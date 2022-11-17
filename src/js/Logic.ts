@@ -56,9 +56,8 @@ export class Logic {
         this.locomotive.move();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(this.getBackground(), 0, 0);
+        this.contentPreview.draw(this.context);
         this.locomotive.draw(this.context);
-        if (this.rails.shouldRedrawDraggable)
-            this.contentPreview.draw(this.context);
         this.rails.draw(this.context);
     }
 
