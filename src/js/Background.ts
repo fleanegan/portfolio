@@ -28,7 +28,7 @@ export class DragItem extends GameObject {
     }
 
     draw(context: CanvasRenderingContext2D) {
-        const radius = DragItem.radius;
+        const radius = Math.min(Scaler.xLimited(DragItem.radius, 12, 20), Scaler.yLimited(DragItem.radius, 12, 20));
         const style = this.getStyle();
 
         context.beginPath();
