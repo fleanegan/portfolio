@@ -119,11 +119,7 @@ export class Rails {
     }
 
     private drawRails(context: CanvasRenderingContext2D) {
-        let scaleFactor = Scaler.x(1);
-        if (scaleFactor < 0.75)
-            scaleFactor = 0.75;
-        if (scaleFactor > 3)
-            scaleFactor = 3;
+        let scaleFactor = Scaler.xLimited(1);
         let negativeOffset = generateOffsetCurveNegative(this.path.getPoints(), 10 * scaleFactor);
         let positiveOffset = generateOffsetCurvePositive(this.path.getPoints(), 10 * scaleFactor);
 

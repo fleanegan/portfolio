@@ -76,7 +76,7 @@ export class Logic {
 
     zoom() {
         this.railInteractivityHandler.updateZoom();
-        this.locomotive.scaleLength(Scaler.x(1));
+        this.locomotive.scaleLength(Scaler.xLimited(1));
         this.generateStaticBackground();
     }
 

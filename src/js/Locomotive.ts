@@ -57,7 +57,7 @@ export class Locomotive {
         } else {
             if (Direction.Idle === this.direction) {
                 this.velocity *= 0.95;
-            } else if (Math.abs(this.velocity) <= 0.005 * Scaler.x(1)) {
+            } else if (Math.abs(this.velocity) <= 0.003) {
                 this.velocity += 0.00025 * this.direction;
             }
         }
