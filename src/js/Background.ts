@@ -109,8 +109,12 @@ export class Rails {
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        if (this.shouldRedrawRails)
+        if (this.shouldRedrawRails){
             this.drawRails(context);
+            this.splineBasePoints.forEach((item) => {
+                item.draw(context);
+            });
+        }
         if (this.shouldRedrawDraggable) {
             this.splineBasePoints.forEach((item) => {
                 item.draw(context);

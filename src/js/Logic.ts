@@ -54,10 +54,12 @@ export class Logic {
         }
         this.locomotive.move();
         this.context.putImageData(this.getBackground(), 0, 0);
-        if (this.railInteractivityHandler.isPathDragged())
-            this.contentPreview.drawTargets(this.context);
-        this.locomotive.draw(this.context);
         this.rails.draw(this.context);
+        if (this.railInteractivityHandler.isPathDragged())
+        {
+            this.contentPreview.drawTargets(this.context);
+        }
+        this.locomotive.draw(this.context);
     }
 
     updateLocomotiveDirection(pressedKeys: Set<string>) {
