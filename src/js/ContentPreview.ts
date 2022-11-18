@@ -38,10 +38,17 @@ export class ContentPreview{
         }
         return [];
     }
+
+    drawTargets(context: CanvasRenderingContext2D) {
+        this.targets.forEach((target) => {
+            target.dragTarget.draw(context);
+        });
+        console.log("redrawing context");
+    }
 }
 
 export class ContentTile extends GameObject {
-    private dragTarget: DragItem;
+    dragTarget: DragItem;
     private height: number = 350;
     private width: number = 390;
     private img: HTMLImageElement;
@@ -68,6 +75,7 @@ export class ContentTile extends GameObject {
 
     setHightlightMode(targetMode: HighlightMode) {
         this.dragTarget.isHightlighted = targetMode;
+        console.log("set hightlight to " + targetMode);
     }
 
     getDragTargetCenter(): Point {
@@ -84,11 +92,11 @@ export class ContentTile extends GameObject {
         const y = this.center.y - Scaler.y(512) / 7;
         const w = Scaler.x(512);
         const h = Scaler.y(512);
+        this.dragTarget.draw(context);
         await new Promise(r => {
             this.img.onload = r;
             this.img.src = icon;
         });
         context.drawImage(this.img, x, y, w, h);
-        this.dragTarget.draw(context);
     }
 }

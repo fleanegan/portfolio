@@ -55,7 +55,7 @@ export class DragItem extends GameObject {
 export function drawBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     context.fillStyle = '#ccd5ae'
     context.beginPath();
-    context.fillRect(0, 0, canvas.width + window.screen.width, canvas.height + window.screen.height);
+    context.fillRect(0, 0, canvas.width + window.innerWidth, canvas.height + window.innerHeight);
     context.stroke();
 }
 

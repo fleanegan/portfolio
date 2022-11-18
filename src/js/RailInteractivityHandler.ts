@@ -27,7 +27,6 @@ export class RailInteractivityHandler {
         }
         this.rails.path.interpolate(tmp);
         this.rails.shouldRedrawRails = true;
-        this.rails.shouldRedrawDraggable = true;
     }
 
     handlePointerDown(pointerPosition: Point) {
@@ -57,6 +56,7 @@ export class RailInteractivityHandler {
             this.contentPreview.setTargetHightlightMode(HighlightMode.Light);
             this.snapPointerToTargetIfNear(pointerPosition);
         }
+        this.rails.shouldRedrawDraggable = this.isPathDragged();
     }
 
     private autopilotToSelectedTarget(pointerPosition: Point) {

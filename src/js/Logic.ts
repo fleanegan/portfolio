@@ -4,7 +4,7 @@ import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
 import {RailInteractivityHandler} from "./RailInteractivityHandler";
-import {ContentPreview, ContentTile} from "./ContentPreview";
+import {ContentPreview} from "./ContentPreview";
 
 export class Logic {
     private rails: Rails;
@@ -15,10 +15,10 @@ export class Logic {
     private contentPreview: ContentPreview;
 
     constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
-        this.detailedContentView = new DetailedContentView();
     }
 
     async init() {
+        this.detailedContentView = new DetailedContentView();
         this.rails = new Rails([
             [1500.4928366762176, 147.263644773358], [218.08595988538679, 98.17576318223868], [219.62177650429797, 545.5448658649399], [804.7679083094554, 565.626271970398], [932.2406876790828, 1077.7021276595744], [1541.9598853868195, 1054.2738205365406], [1957.666485605649, 785.3950413223142]
         ]);
@@ -54,6 +54,8 @@ export class Logic {
         }
         this.locomotive.move();
         this.context.putImageData(this.getBackground(), 0, 0);
+        if (this.railInteractivityHandler.isPathDragged())
+            this.contentPreview.drawTargets(this.context);
         this.locomotive.draw(this.context);
         this.rails.draw(this.context);
     }
