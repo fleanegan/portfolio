@@ -1,7 +1,7 @@
 import {DetailedContentView} from "./DetailedContentView";
 
-declare var require: any;
-require('../css/main.css');
+// declare var require: any;
+// require('../css/main.css');
 
 import Game from './Game';
 

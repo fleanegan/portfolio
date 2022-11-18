@@ -84,8 +84,6 @@ export class DetailedContentView {
 <title>dummy html document</title>
 </head>
 
-<body background="http://www.microsoft.com/library/images/gifs/general/wallpaper.gif">
-
 <h1>HTML Dummy Page</h1>
 <hr>
 
@@ -202,102 +200,6 @@ A directory:
 <br><br>
 <tt>typewriter font</tt>
 <hr>
-
-<!--Anchors--><h3>Anchors</h3>
-<a href="http://www.cs.unc.edu:80/wwwc-f95/private/notes-9-5-95.html">Class notes on HTML</a>
- <br><br>
-
-<a href="http://www.cs.unc.edu:80/wwwc-f95/public/guru_topics.html#potential">Anchor to a point within a file</a>
-<a name="potential"></a>
-<hr>
-
-<!--Images--><h3>Images</h3>
-
-<img src="http://www.cs.unc.edu/~jbs/figures/jbs.jpg">
-<br><br>
-<img alt="Text to be displayed, if can't show image; also, aligned right." src="http://www.cs.unc.edu/~ladd/images/skull.gif" align="right">
-<br><br><br><br>
-
-
-An example of an image serving as an anchor:<br>
-<a href="http://www.cs.unc.edu/~jbs"><img src="http://www.cs.unc.edu/~jbs/figures/jbs.jpg">jbs</a>
-<br>You can click on either the picture or the "jbs" just to the (lower) right of it to follow the link.
-<hr>
-
-<!--Contact Information--><h3>Contact information</h3>
-<address>
-email: <a href="mailto:jbs@cs.unc.edu">jbs@cs.unc.edu</a>
-<br>
-url: <a href="http://www.cs.unc.edu/~jbs">http://www.cs.unc.edu/~jbs</a>
-</address>
-<hr>
-
-<!--Netscape extensions--><h3>Netscape extensions</h3>
-
-<img alt="" src="http://www.cs.unc.edu/~jbs/figures/jbs.jpg" hspace="10" align="left">
-In this example, the image is aligned left (standard), but it is separated from the wrap-around text by 10 pixels of space.  It also uses the Break Clear All feature to separate the wrap-around text from the text that follows.
-<br clear="all">
-Here is the text that follows.
-<br><br>
-
-Example of Netscape HR extensions:
-<hr width="50%" size="10" noshade="" align="center">
-<br><br>
-
-Example of Netscape UL extensions:
-<ul type="square">
-<li> term 1
-        <ul type="circle">
-        <li>term a
-        </li><li>term b
-        </li></ul>
-</li><li> term 2
-        <ul type="disk">
-        <li>term a
-        </li><li>term b
-        </li></ul>
-</li></ul>
-<br><br>
-
-Example of Netscape OL extensions:
-<ol type="1">
-<li> term 1
-        <ol type="A">
-        <li>term a
-        </li><li>term b
-        </li></ol>
-</li><li> term 2
-        <ol type="I">
-        <li>term a
-        </li><li>term b
-        </li></ol>
-</li></ol>
-<br><br>
-
-Fonts can now be made <font size="+3">larger</font>,
-<font size="-2">smaller</font>, and returned to normal.
-<br><br>
-
-Nobreak lets you keep <nobr>lonnnnnnnnnnnnnnnnnnnnnnnnng strings together that would, otherwise, be broken.</nobr>
-<nobr>
-<br><br>
-
-<center><font size="+2"><b>Text can also be centered. </b></font></center>
-<br><br>
-
-Standard copyright (©) and registered (®) symbols are available.
-
-<hr>
-<address>
-email: <a href="mailto:jbs@cs.unc.edu">jbs@cs.unc.edu</a>
-<br>
-url: <a href="http://www.cs.unc.edu/~jbs">http://www.cs.unc.edu/~jbs</a>
-</address>
-
-
-
-
-
 </nobr></body></html>`,
         );
         if (window.innerWidth <= 650) {

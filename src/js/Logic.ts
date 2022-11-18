@@ -20,11 +20,17 @@ export class Logic {
     async init() {
         this.detailedContentView = new DetailedContentView();
         this.rails = new Rails([
-            [1500.4928366762176, 147.263644773358], [218.08595988538679, 98.17576318223868], [219.62177650429797, 545.5448658649399], [804.7679083094554, 565.626271970398], [932.2406876790828, 1077.7021276595744], [1541.9598853868195, 1054.2738205365406], [1957.666485605649, 785.3950413223142]
+            [1500.4928366762176, 147.263644773358],
+            [218.08595988538679, 98.17576318223868],
+            [219.62177650429797, 545.5448658649399],
+            [804.7679083094554, 565.626271970398],
+            [932.2406876790828, 1077.7021276595744],
+            [1541.9598853868195, 1054.2738205365406],
+            [1957.666485605649, 785.3950413223142]
         ]);
         this.contentPreview = new ContentPreview();
         this.railInteractivityHandler = new RailInteractivityHandler(this.rails, this.contentPreview);
-        this.locomotive = new Locomotive(this.rails.path, Scaler.x(175));
+        this.locomotive = new Locomotive(this.rails.path, Scaler.xLimited(1) * 175);
         await this.generateStaticBackground();
     }
 

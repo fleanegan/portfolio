@@ -1,7 +1,9 @@
 import {DragItem, HighlightMode} from "./Background";
 import {Point} from "./mathUtils";
 import {GameObject} from "./GameObject";
-import icon from "../../assets/contentShape.png";
+import iconMaschinenbau from "../../assets/maschinenbau.png";
+import iconInformatics from "../../assets/informatics.png";
+import iconBricolage from "../../assets/bricolage.png";
 import {Scaler} from "./utils";
 
 enum ReferencePointMode {
@@ -17,9 +19,9 @@ export class ContentPreview{
 
     constructor() {
         this.targets = [
-            new ContentTile(new Point(Scaler.x(64), window.innerHeight), "Content 1", ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(window.innerWidth - Scaler.x(128), 0), "Content 2", ReferencePointMode.UpperRight),
-        new ContentTile(new Point(window.innerWidth / 2 - Scaler.x(128), window.innerHeight * 0.5), "Content 2", ReferencePointMode.UpperLeft)];
+            new ContentTile(new Point(Scaler.x(ContentTile.radius / 4), window.innerHeight - Scaler.y(ContentTile.radius / 4)), iconBricolage, ReferencePointMode.LowerLeft),
+            new ContentTile(new Point(window.innerWidth - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
+        new ContentTile(new Point(window.innerWidth / 2 - Scaler.x(ContentTile.radius / 2), window.innerHeight * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
     }
 
     async draw(context: CanvasRenderingContext2D) {
@@ -59,23 +61,20 @@ export class ContentPreview{
 
 export class ContentTile extends GameObject {
     dragTarget: DragItem;
-    private height: number = 350;
-    private width: number = 390;
+    static radius: number = 256;
     private img: HTMLImageElement;
     private scaleFactor: number = 1;
 
-    constructor(rawCenter: Point, private title: string, private referencePointMode?: ReferencePointMode) {
-        let height = 350;
-        let width = 390;
+    constructor(rawCenter: Point, private imgSrc: any, private referencePointMode?: ReferencePointMode) {
         if (referencePointMode === ReferencePointMode.LowerLeft){
-            rawCenter.y -= Scaler.y(height);
+            rawCenter.y -= Scaler.y(ContentTile.radius);
         }
         if (referencePointMode === ReferencePointMode.UpperRight){
-            rawCenter.x -= Scaler.x(width);
+            rawCenter.x -= Scaler.x(ContentTile.radius);
         }
         super(rawCenter);
         this.img = new Image();
-        this.img.src = icon;
+        this.img.src = imgSrc;
         let relativeDragTargetPosition = new Point(0, 0);
         this.dragTarget = new DragItem(relativeDragTargetPosition,
             {strokeColor: '#ffffff', fillColor: '#ffffff', lineWidth: 5},
@@ -106,36 +105,36 @@ export class ContentTile extends GameObject {
         const maxSize = 512;
         const calculatedFactor = Math.min(Scaler.x(1), Scaler.y(1));
 
-        if (this.width * calculatedFactor < minSize)
-            this.scaleFactor = minSize / this.height;
-        else if (this.width * calculatedFactor > maxSize)
-            this.scaleFactor = maxSize / this.height;
+        if (ContentTile.radius * calculatedFactor < minSize)
+            this.scaleFactor = minSize / ContentTile.radius;
+        else if (ContentTile.radius * calculatedFactor > maxSize)
+            this.scaleFactor = maxSize / ContentTile.radius;
         else
             this.scaleFactor = calculatedFactor;
         this.moveIntoVisibleCanvas();
-        this.dragTarget.setCenter(new Point(this.center.x + this.width * this.scaleFactor * 0.85, this.center.y + this.height * this.scaleFactor * 0.85));
+        this.dragTarget.setCenter(new Point(this.center.x + ContentTile.radius * this.scaleFactor * 0.175, this.center.y + ContentTile.radius * this.scaleFactor * 0.3));
     }
 
     private moveIntoVisibleCanvas() {
-        while (this.center.x + this.width * this.scaleFactor > window.innerWidth)
+        while (this.center.x + ContentTile.radius * this.scaleFactor > window.innerWidth)
             this.center.x--;
         while (this.center.x < 0)
             this.center.x++;
-        while (this.center.y + this.height * this.scaleFactor > window.innerHeight)
+        while (this.center.y + ContentTile.radius * this.scaleFactor > window.innerHeight)
             this.center.y--;
         while (this.center.y < 0)
             this.center.y++;
     }
 
     async draw(context: CanvasRenderingContext2D) {
-        const x = this.center.x - this.scaleFactor * 512 / 10;
-        const y = this.center.y - this.scaleFactor * 512 / 7;
-        const w = this.scaleFactor * 512;
-        const h = this.scaleFactor * 512;
+        const x = this.center.x;
+        const y = this.center.y;
+        const w = this.scaleFactor * ContentTile.radius;
+        const h = this.scaleFactor * ContentTile.radius;
         this.dragTarget.draw(context);
         await new Promise(r => {
             this.img.onload = r;
-            this.img.src = icon;
+            this.img.src = this.imgSrc;
         });
         context.drawImage(this.img, x, y, w, h);
     }
