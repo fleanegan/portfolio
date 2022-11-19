@@ -107,12 +107,12 @@ export class Logic {
 
     handlePointerDown(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerDown(pointerPosition);
-        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition))
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTile(pointerPosition))
             this.deactivateHelp();
     }
 
     handlePointerUp(pointerPosition: Point) {
-        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition)) {
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTile(pointerPosition)) {
             this.railInteractivityHandler.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }
@@ -123,7 +123,7 @@ export class Logic {
 
     handlePointerPressedMove(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerPressedMove(pointerPosition);
-        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition))
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTile(pointerPosition))
             this.deactivateHelp();
     }
 

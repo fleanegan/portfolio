@@ -35,7 +35,7 @@ export class RailInteractivityHandler {
     }
 
     handlePointerUp(pointerPosition: Point) {
-        if (this.isNearTarget(pointerPosition)) {
+        if (this.isNearTile(pointerPosition)) {
             this.autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition);
             this.updatePath();
         }
@@ -68,7 +68,7 @@ export class RailInteractivityHandler {
     private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
         let nearestBasePoint = this.rails.splineBasePoints[0];
         let shortestDistance = Number.MAX_SAFE_INTEGER;
-        const targets: ContentTile[] = this.contentPreview.getTargetsUnderPointer(pointerPosition);
+        const targets: ContentTile[] = this.contentPreview.getTileUnderPointer(pointerPosition);
 
         if (targets.length != 0) {
             this.rails.splineBasePoints.forEach((basePoint) => {
@@ -124,7 +124,8 @@ export class RailInteractivityHandler {
         return result;
     }
 
-    isNearTarget(point: Point): boolean {
-        return this.contentPreview.getTargetsUnderPointer(point).length != 0;
+    isNearTile(point: Point): boolean {
+         return this.contentPreview.getTileUnderPointer(point).length != 0;
+        // return this.contentPreview.getTargetsUnderPointer(point).length != 0;
     }
 }

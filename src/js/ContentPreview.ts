@@ -12,14 +12,14 @@ enum ReferencePointMode {
     UpperRight,
 }
 
-export class ContentPreview{
+export class ContentPreview {
     targets: ContentTile[];
 
     constructor() {
         this.targets = [
-            new ContentTile(new Point(Scaler.x(ContentTile.radius / 4), Scaler.getHeight() - Scaler.y(ContentTile.radius / 4)), iconBricolage, ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
-        new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.radius / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
+            new ContentTile(new Point(Scaler.x(ContentTile.diameter / 4), Scaler.getHeight() - Scaler.y(ContentTile.diameter / 4)), iconBricolage, ReferencePointMode.LowerLeft),
+            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.diameter / 2), Scaler.y(ContentTile.diameter / 2)), iconInformatics, ReferencePointMode.UpperRight),
+            new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.diameter / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
     }
 
     async draw(context: CanvasRenderingContext2D) {
@@ -43,7 +43,16 @@ export class ContentPreview{
     getTargetsUnderPointer(pointerPosition: Point): ContentTile[] {
         for (const target of this.targets) {
             const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-            if (distance < DragItem.radius * 2) {
+            if (distance < ContentTile.diameter * 2) {
+                return [target];
+            }
+        }
+        return [];
+    }
+
+    getTileUnderPointer(pointerPosition: Point): ContentTile[] {
+        for (const target of this.targets) {
+            if (target.isPointOnTile(pointerPosition)) {
                 return [target];
             }
         }
@@ -59,16 +68,18 @@ export class ContentPreview{
 
 export class ContentTile extends GameObject {
     dragTarget: DragItem;
-    static radius: number = 400;
+    static diameter: number = 400;
+    static minDiameter: number = 128;
+    static maxDiameter: number = 768;
     private img: HTMLImageElement;
     private scaleFactor: number = 1;
 
     constructor(rawCenter: Point, private imgSrc: any, private referencePointMode?: ReferencePointMode) {
-        if (referencePointMode === ReferencePointMode.LowerLeft){
-            rawCenter.y -= Scaler.y(ContentTile.radius);
+        if (referencePointMode === ReferencePointMode.LowerLeft) {
+            rawCenter.y -= Scaler.y(ContentTile.diameter);
         }
-        if (referencePointMode === ReferencePointMode.UpperRight){
-            rawCenter.x -= Scaler.x(ContentTile.radius);
+        if (referencePointMode === ReferencePointMode.UpperRight) {
+            rawCenter.x -= Scaler.x(ContentTile.diameter);
         }
         super(rawCenter);
         this.img = new Image();
@@ -99,31 +110,44 @@ export class ContentTile extends GameObject {
 
     updateZoom() {
         super.updateZoom();
-        const minSize = 128;
-        const maxSize = 768;
-        const calculatedFactor = Math.min(Scaler.x(1), Scaler.y(1));
-
-        if (ContentTile.radius * calculatedFactor < minSize)
-            this.scaleFactor = minSize / ContentTile.radius;
-        else if (ContentTile.radius * calculatedFactor > maxSize)
-            this.scaleFactor = maxSize / ContentTile.radius;
-        else
-            this.scaleFactor = calculatedFactor;
+        this.scaleFactor = ContentTile.calculateScaleFactor()
         this.moveIntoVisibleCanvas();
         this.dragTarget.setCenter(
             new Point(
-                this.center.x + ContentTile.radius * this.scaleFactor * 0.175,
-                this.center.y + ContentTile.radius * this.scaleFactor * 0.375
+                this.center.x + ContentTile.diameter * this.scaleFactor * 0.175,
+                this.center.y + ContentTile.diameter * this.scaleFactor * 0.375
             )
         );
     }
 
+    static calculateScaleFactor() {
+        const calculatedFactor = Math.min(Scaler.x(1), Scaler.y(1));
+        let result;
+
+        if (ContentTile.diameter * calculatedFactor < ContentTile.minDiameter)
+            result = ContentTile.minDiameter / ContentTile.diameter;
+        else if (ContentTile.diameter * calculatedFactor > ContentTile.maxDiameter)
+            result = ContentTile.maxDiameter / ContentTile.diameter;
+        else
+            result = calculatedFactor;
+        return result;
+    }
+
+    isPointOnTile(point: Point) {
+        let circleCenter: Point = new Point(
+            this.center.x + ContentTile.diameter * this.scaleFactor / 2,
+            this.center.y + ContentTile.diameter * this.scaleFactor / 2
+        );
+
+        return circleCenter.distanceTo(point) < this.scaleFactor * ContentTile.diameter / 2;
+    }
+
     private moveIntoVisibleCanvas() {
-        while (this.center.x + ContentTile.radius * this.scaleFactor > Scaler.getWidth())
+        while (this.center.x + ContentTile.diameter * this.scaleFactor > Scaler.getWidth())
             this.center.x--;
         while (this.center.x < 0)
             this.center.x++;
-        while (this.center.y + ContentTile.radius * this.scaleFactor > Scaler.getHeight())
+        while (this.center.y + ContentTile.diameter * this.scaleFactor > Scaler.getHeight())
             this.center.y--;
         while (this.center.y < 0)
             this.center.y++;
@@ -132,8 +156,8 @@ export class ContentTile extends GameObject {
     async draw(context: CanvasRenderingContext2D) {
         const x = this.center.x;
         const y = this.center.y;
-        const w = this.scaleFactor * ContentTile.radius;
-        const h = this.scaleFactor * ContentTile.radius;
+        const w = this.scaleFactor * ContentTile.diameter;
+        const h = this.scaleFactor * ContentTile.diameter;
         this.dragTarget.draw(context);
         await new Promise(r => {
             this.img.onload = r;
