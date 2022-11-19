@@ -107,18 +107,12 @@ export class DetailedContentView {
 
     setContent(rawHTML: string) {
         const modalBox = document.getElementById("ModalBox");
+        let oldContent = document.getElementById("modalInnerHtml");
+        if (oldContent)
+            oldContent.remove();
         let contentHolder = document.createElement("content");
-        contentHolder.setAttribute("style", "display: flex;" +
-            "    flex-direction: column;" +
-            "    justify-content: left;" +
-            "    gap: 0.4rem;" +
-            "    width: 100%;" +
-            "    height: 80%;" +
-            "    padding: 64px 0 0 0;" +
-            "    overflow-y: auto;" +
-            "    top: 10%;" +
-            "    z-index: 2;"
-        );
+        contentHolder.setAttribute("class", "modalContent");
+        contentHolder.setAttribute("id", "modalInnerHtml");
         if (!modalBox)
             throw new Error("could not find DOM");
         modalBox.appendChild(contentHolder);

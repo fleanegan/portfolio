@@ -2,7 +2,8 @@ import {Logic} from "./Logic";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
-import legal from "../legal.html"
+import legalPage from "../legal.html"
+import contactPage from "../contact.html"
 
 type DrawingState = {
     pointerPosition: { x: number; y: number };
@@ -91,13 +92,19 @@ export default class Game {
             this.drawingState.pressedKeys.has('ArrowLeft');
     }
 
-    async init() {
-        const legalLink = document.getElementById("legalLink");
+    private setUpClickable(HtmlId: string, rawHtmlModalContent: string){
+        const legalLink = document.getElementById(HtmlId);
         const self = this;
         legalLink.onclick = function () {
-            self.detailedContentView.setContent(legal);
+            self.detailedContentView.setContent(rawHtmlModalContent);
             self.detailedContentView.show();
         };
+    }
+
+    async init() {
+        this.setUpClickable("legalLink", legalPage);
+        this.setUpClickable("contactLink", contactPage);
+        this.setUpClickable("titleLink", contactPage);
         await this.logic.init(this.detailedContentView);
     }
 }
