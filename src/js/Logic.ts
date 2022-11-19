@@ -44,6 +44,7 @@ export class Logic {
             this.animations.push(new AnimationNudge(p2, p3, 2000, "Click me!", Mode.Loop));
             this.animations[0].activate(new Date().getTime());
             this.animations[1].activate(new Date().getTime());
+            this.animations[1].deactivate();
         } else{
             this.animations.forEach((animation) => {
                 if (animation.isActivated()){

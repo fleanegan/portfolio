@@ -59,7 +59,7 @@ export class ContentPreview{
 
 export class ContentTile extends GameObject {
     dragTarget: DragItem;
-    static radius: number = 256;
+    static radius: number = 400;
     private img: HTMLImageElement;
     private scaleFactor: number = 1;
 
@@ -100,7 +100,7 @@ export class ContentTile extends GameObject {
     updateZoom() {
         super.updateZoom();
         const minSize = 128;
-        const maxSize = 512;
+        const maxSize = 768;
         const calculatedFactor = Math.min(Scaler.x(1), Scaler.y(1));
 
         if (ContentTile.radius * calculatedFactor < minSize)

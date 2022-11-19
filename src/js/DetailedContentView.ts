@@ -19,23 +19,7 @@ export class DetailedContentView {
         let newContent = document.createTextNode("X");
         newcloseButton.appendChild(newContent);
         newcloseButton.id = "btn";
-        newcloseButton.setAttribute("style",
-            "position: fixed;" +
-            " z-index: 6;" +
-            "    border-radius: 64px;" +
-            "border :1px solid;" +
-            "background-color  : #d62828;" +
-            "    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);" +
-            " min-height: 64px;" +
-            " min-width:  64px;" +
-            " max-width:  64px;" +
-            " max-width:  64px;" +
-            " float: right;" +
-            " margin: 0px;" +
-            " padding:0px;" +
-            " clear: both;" +
-            " float:right;" +
-            "font-size:4ref;");
+        newcloseButton.setAttribute("class", "modalCloseButton");
         modalBox.appendChild(newcloseButton);
         newcloseButton.addEventListener("click", () => {
             this.hide();
