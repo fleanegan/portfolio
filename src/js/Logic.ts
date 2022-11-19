@@ -56,16 +56,15 @@ export class Logic {
             return;
         this.updateLocomotiveDirection(pressedKeys);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
-            console.log("showing detailed view");
             this.detailedContentView.show();
+            this.railInteractivityHandler.autopilotDestination = null;
+            this.locomotive.stop();
         }
         this.locomotive.move();
         this.context.putImageData(this.getBackground(), 0, 0);
         this.rails.draw(this.context);
         if (this.railInteractivityHandler.isPathDragged())
-        {
             this.contentPreview.drawTargets(this.context);
-        }
         this.locomotive.draw(this.context);
     }
 
@@ -78,8 +77,8 @@ export class Logic {
             if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft') && this.locomotive.direction != Direction.Auto)
                 this.locomotive.setDirection(Direction.Idle);
         } else {
-            console.log("starting \n\n\nautopilot\n\n\n");
             this.locomotive.setDirection(Direction.Auto);
+            console.log("starting in auto");
         }
     }
 
@@ -99,9 +98,8 @@ export class Logic {
             this.railInteractivityHandler.handlePointerUp(pointerPosition);
             this.generateStaticBackground();
         }
-        if (this.railInteractivityHandler.autopilotDestination != null) {
+        if (this.railInteractivityHandler.autopilotDestination != null && this.locomotive.direction != Direction.Auto) {
             this.locomotive.setDestination(this.railInteractivityHandler.autopilotDestination);
-            this.railInteractivityHandler.autopilotDestination = null;
         }
     }
 

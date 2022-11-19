@@ -206,7 +206,6 @@ A directory:
         );
         if (Scaler.getWidth() <= 650) {
             modalBox.style.minWidth = "100%";
-            console.log("wuhi\n\n\n\n")
         }
 
         document.body.appendChild(modalBox);

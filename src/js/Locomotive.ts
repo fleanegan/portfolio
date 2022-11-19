@@ -27,9 +27,13 @@ export class Locomotive {
         let oldProgress: number;
         let newProgress: number;
 
+        if (this.autopilotDestinationAsProgress === null)
+            return true;
         if (this.velocity < 0) {
-            newProgress = this.truncateNormalizedPathLength(this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength());
-            oldProgress = this.truncateNormalizedPathLength(this.oldTrainProgress + this.getTrainLengthAsNormalizedPathLength());
+            newProgress = this.truncateNormalizedPathLength(
+                this.trainProgress + this.velocity + this.getTrainLengthAsNormalizedPathLength());
+            oldProgress = this.truncateNormalizedPathLength(
+                this.oldTrainProgress + this.getTrainLengthAsNormalizedPathLength());
         } else {
             oldProgress = this.truncateNormalizedPathLength(this.oldTrainProgress);
             newProgress = this.truncateNormalizedPathLength(this.trainProgress + this.velocity);
@@ -38,21 +42,14 @@ export class Locomotive {
             newProgress -= 1;
         if (this.velocity > 0 && oldProgress > newProgress)
             oldProgress -= 1;
-        if ((oldProgress < this.autopilotDestinationAsProgress) != (newProgress < this.autopilotDestinationAsProgress))
-            return true;
-        return false;
-
+        return (
+            oldProgress < this.autopilotDestinationAsProgress) != (newProgress < this.autopilotDestinationAsProgress);
     }
 
     move() {
         if (this.direction === Direction.Auto) {
             if (Math.abs(this.velocity) <= Math.abs(this.autopilotVelocity))
                 this.velocity += 0.001 * Math.sign(this.autopilotVelocity);
-            if (this.hasReachedDestination()) {
-                this.autopilotVelocity = 0;
-                this.autopilotDestinationAsProgress = null;
-                this.velocity = 0;
-            }
         } else {
             if (Direction.Idle === this.direction) {
                 this.velocity *= 0.95;
@@ -75,7 +72,6 @@ export class Locomotive {
         if (difference < -0.5)
             difference += 1;
         this.autopilotVelocity = difference / 10;
-        console.log("auto destination " + destination.x, destination.y);
     }
 
     calcAxlePositions(): Point[] {
@@ -144,5 +140,12 @@ export class Locomotive {
 
     setDirection(direction: Direction) {
         this.direction = direction;
+    }
+
+    stop() {
+        this.autopilotVelocity = 0;
+        this.autopilotDestinationAsProgress = null;
+        this.velocity = 0;
+        this.direction = Direction.Idle;
     }
 }

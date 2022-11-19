@@ -6,52 +6,33 @@ html, body {
     margin: 0px;
     padding: 0px;
     display: flex;
+    align-content: center;
     flex-direction: row;
-    justify-content: center;
-    background-color: antiquewhite;
 }
 
-.main_header{
-    width: 100%;
-    min-height: 5rem;
-    max-height: 10%;
-    background-color: crimson;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.header_title{
-    margin: auto;
-    display: flex;
-}
-
-.holder{
-    position: absolute;
-    margin-top: 5rem;
-    height: 100%;
+.content{
     width: 60%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /*background-color: antiquewhite;*/
+    align-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        background-color: lightblue;
+    }
+}
+
+.headerDiv{
+    width: 100%;
 }
 
 canvas {
-    /*-webkit-tap-highlight-color: transparent;*/
-    display: flex;
-    position: relative;
+    -webkit-tap-highlight-color: transparent;
     z-index: 1;
     width: 100%;
     height: 90%;
-    box-shadow: 5px 5px 15px 5px #000000;
-}
-
-@media (max-width: 800px) {
-    .holder{
-        width: 100%;
-        height: 90%;
-    }
 }
 
 .modal {
