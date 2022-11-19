@@ -49,11 +49,34 @@ html, body {
     align-content: center;
 }
 
+.drawingArea{
+    display: flex;
+    position: relative;
+    height: 100%;
+}
+
 canvas {
     -webkit-tap-highlight-color: transparent;
     z-index: 1;
+    display: block;
+    position: absolute;
     width: 100%;
     height: 100%;
+}
+
+.button {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 50px 0 50px 86.6px;
+    border-color: transparent transparent transparent #426a79;
+    display: block;
+    margin: 2rem;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 16px;
+    z-index: 5;
 }
 
 .footerDiv{

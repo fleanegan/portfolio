@@ -55,7 +55,7 @@ export class Logic {
         return this.background;
     }
 
-    process(pressedKeys: Set<string>) {
+    process(pressedKeys: Direction.Idle | Direction.Forward | Direction.Backwards) {
         if (this.detailedContentView.isHidden() == false)
             return;
         this.updateLocomotiveDirection(pressedKeys);
@@ -72,14 +72,9 @@ export class Logic {
         this.locomotive.draw(this.context);
     }
 
-    updateLocomotiveDirection(pressedKeys: Set<string>) {
+    updateLocomotiveDirection(userInput: Direction) {
         if (this.locomotive.autopilotDestinationAsProgress == null) {
-            if (pressedKeys.has('ArrowRight'))
-                this.locomotive.setDirection(Direction.Forward);
-            else if (pressedKeys.has('ArrowLeft'))
-                this.locomotive.setDirection(Direction.Backwards);
-            if (!pressedKeys.has('ArrowRight') && !pressedKeys.has('ArrowLeft') && this.locomotive.direction != Direction.Auto)
-                this.locomotive.setDirection(Direction.Idle);
+            this.locomotive.setDirection(userInput);
         } else {
             this.locomotive.setDirection(Direction.Auto);
             console.log("starting in auto");

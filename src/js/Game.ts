@@ -4,6 +4,7 @@ import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
 import legalPage from "../legal.html"
 import contactPage from "../contact.html"
+import {Direction} from "./Locomotive";
 
 type DrawingState = {
     pointerPosition: { x: number; y: number };
@@ -56,6 +57,8 @@ export default class Game {
             this.drawingState.pointerPosition.x = x;
             this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = false;
+            this.drawingState.pressedKeys.delete("ForwardButton");
+            console.log("user input has fwdb: " + this.drawingState.pressedKeys.has("ForwardButton"));
             this.logic.handlePointerUp(new Point(x, y));
         });
 
@@ -79,18 +82,29 @@ export default class Game {
             this.canvas.height = Scaler.getHeight()
             this.logic.zoom();
         })
+
+        document.getElementById("forwardButton").addEventListener("pointerdown", () =>{
+                this.drawingState.pressedKeys.add("ForwardButton");
+        })
+
+        document.getElementById("forwardButton").addEventListener("pointerup", () =>{
+                this.drawingState.pressedKeys.delete("ForwardButton");
+        })
     }
 
     public render(): void {
-        this.logic.process(this.drawingState.pressedKeys);
+        let userInput: Direction = Direction.Idle;
+
+        // console.log("user input has fwdb: " + this.drawingState.pressedKeys.has("ForwardButton"));
+        // console.log("user input has keypress: " + this.drawingState.pressedKeys.has("ArrowRight"));
+        if (this.drawingState.pressedKeys.has("ForwardButton") ||
+            this.drawingState.pressedKeys.has("ArrowRight"))
+            userInput = Direction.Forward;
+        else if (this.drawingState.pressedKeys.has('ArrowLeft'))
+            userInput = Direction.Backwards;
+        this.logic.process(userInput);
     }
 
-    private isForcingRedraw(): boolean {
-        return this.drawingState.pressedKeys.has('ArrowDown') ||
-            this.drawingState.pressedKeys.has('ArrowUp') ||
-            this.drawingState.pressedKeys.has('ArrowRight') ||
-            this.drawingState.pressedKeys.has('ArrowLeft');
-    }
 
     private setUpClickable(HtmlId: string, rawHtmlModalContent: string){
         const legalLink = document.getElementById(HtmlId);
