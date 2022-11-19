@@ -18,8 +18,8 @@ export class ContentPreview{
     constructor() {
         this.targets = [
             new ContentTile(new Point(Scaler.x(ContentTile.radius / 4), Scaler.getHeight() - Scaler.y(ContentTile.radius / 4)), iconBricolage, ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(Scaler.getWidth() - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
-        new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.radius / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
+            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
+        new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.radius / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
     }
 
     async draw(context: CanvasRenderingContext2D) {

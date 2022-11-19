@@ -14,25 +14,7 @@ export class DetailedContentView {
     createBox() {
         let modalBox = document.createElement("div");
         modalBox.setAttribute("id", "ModalBox");
-        modalBox.setAttribute("class", "modal");
-        modalBox.setAttribute("style", "display: flex;" +
-            "    flex-direction: column;" +
-            "    background-color: #fdfffc;" +
-            "    justify-content: right;" +
-            "    gap: 0.4rem;" +
-            // "    min-width: 650px;" +
-            "    max-width: 80%;" +
-            "    max-height: 80%;" +
-            "    padding: 1.3rem;" +
-            "    min-height: 80%;" +
-            "    overflow-y: auto;" +
-            "    position: absolute;" +
-            "    top: 10%;" +
-            "box-shadow: 0px 0px 10px 2px rgba(255,255,255,0.39);" +
-            "    z-index: 2;" +
-            // "    border-radius: 15px;" +
-            "    border: 1px solid #ddd;"
-        );
+        modalBox.setAttribute("class", "ModalBox");
         let newcloseButton = document.createElement("button");
         let newContent = document.createTextNode("X");
         newcloseButton.appendChild(newContent);

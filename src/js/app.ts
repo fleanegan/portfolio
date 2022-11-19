@@ -4,6 +4,8 @@ declare var require: any;
 require('../css/main.css');
 require('../css/modal.css');
 require('../legal.html');
+require('../../assets/contactCode.png');
+
 
 import Game from './Game';
 import font from '../../fonts/Gidole-Regular.ttf'

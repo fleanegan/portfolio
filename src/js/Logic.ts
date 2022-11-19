@@ -5,7 +5,7 @@ import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
 import {RailInteractivityHandler} from "./RailInteractivityHandler";
 import {ContentPreview} from "./ContentPreview";
-import {AnimateLinearButton, CustomAnimation, Mode} from "./Animation";
+import {AnimationNudge, CustomAnimation, Mode} from "./Animation";
 
 export class Logic {
     private rails: Rails;
@@ -34,14 +34,23 @@ export class Logic {
     }
 
     private animate() {
-        const p0 = this.rails.splineBasePoints[0].center;
+        const p0 = this.rails.splineBasePoints[3].center;
         const p1 = new Point(p0.x - 25, p0.y + 25);
+        const p2 = this.contentPreview.targets[1].getDragTargetCenter();
+        const p3 = new Point(p2.x - 25, p2.y + 25);
 
         if (this.animations.length === 0) {
-            this.animations.push(new AnimateLinearButton(p0, p1, 5000, Mode.Loop));
+            this.animations.push(new AnimationNudge(p0, p1, 2000, "Drag me!", Mode.Loop));
+            this.animations.push(new AnimationNudge(p2, p3, 2000, "Click me!", Mode.Loop));
             this.animations[0].activate(new Date().getTime());
-        } else
-            this.animations[0].run(new Date().getTime(), this.context);
+            this.animations[1].activate(new Date().getTime());
+        } else{
+            this.animations.forEach((animation) => {
+                if (animation.isActivated()){
+                    animation.run(new Date().getTime(), this.context);
+                }
+            })
+        }
     }
 
     private async generateStaticBackground() {
@@ -78,7 +87,7 @@ export class Logic {
         this.locomotive.draw(this.context);
         this.animate();
         if (newDirection != Direction.Idle)
-            this.animations[0].deactivate();
+            this.deactivateHelp();
     }
 
     updateLocomotiveDirection(userInput: Direction) {
@@ -97,8 +106,8 @@ export class Logic {
 
     handlePointerDown(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerDown(pointerPosition);
-        if (this.railInteractivityHandler.isPathDragged())
-            this.animations[0].deactivate();
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition))
+            this.deactivateHelp();
     }
 
     handlePointerUp(pointerPosition: Point) {
@@ -113,5 +122,12 @@ export class Logic {
 
     handlePointerPressedMove(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerPressedMove(pointerPosition);
+        if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTarget(pointerPosition))
+            this.deactivateHelp();
+    }
+
+    private deactivateHelp() {
+            this.animations[0].deactivate();
+            this.animations[1].deactivate();
     }
 }

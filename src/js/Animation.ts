@@ -1,5 +1,6 @@
 import {Point} from "./mathUtils";
 import {DragItem} from "./Background";
+import {Scaler} from "./utils";
 
 export enum Mode {
     Loop,
@@ -53,11 +54,11 @@ export class CustomAnimation {
     }
 }
 
-export class AnimateLinearButton extends CustomAnimation{
+export class AnimationNudge extends CustomAnimation{
     currentPoint: Point = new Point(0, 0);
     private obj: DragItem;
 
-    constructor(private start: Point, private end: Point, durationInMs: number, mode: Mode = Mode.Normal) {
+    constructor(private start: Point, private end: Point, durationInMs: number, private message: string, mode: Mode = Mode.Normal) {
         super(durationInMs, mode);
         this.obj = new DragItem(start, {strokeColor: "#ff0000", fillColor: "#000000", lineWidth: 5});
     }
@@ -69,6 +70,8 @@ export class AnimateLinearButton extends CustomAnimation{
         this.currentPoint.x = this.start.x + Math.round((this.end.x - this.start.x) * this.getProgress());
         this.currentPoint.y = this.start.y + Math.round((this.end.y - this.start.y) * this.getProgress());
         this.obj.setCenter(this.currentPoint);
-        this.obj.draw(context)
+        this.obj.draw(context);
+        context.font = Scaler.xLimited(1, 0.75, 3) * 20 +"px monospace";
+        context.fillText(this.message, this.end.x - 64, this.end.y + 32);
     }
 }
