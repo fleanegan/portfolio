@@ -38,8 +38,8 @@ export class Logic {
         let canvas = document.createElement('canvas')
         let context = canvas.getContext('2d');
 
-        canvas.width = window.screen.width;
-        canvas.height = window.screen.height;
+        canvas.width = Scaler.getWidth();
+        canvas.height = Scaler.getHeight();
         drawBackground(context, canvas);
         this.railInteractivityHandler.updateZoom();
         await this.contentPreview.draw(context);
@@ -56,6 +56,7 @@ export class Logic {
             return;
         this.updateLocomotiveDirection(pressedKeys);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
+            console.log("showing detailed view");
             this.detailedContentView.show();
         }
         this.locomotive.move();
@@ -83,6 +84,7 @@ export class Logic {
     }
 
     zoom() {
+        Scaler.updateDimensions();
         this.railInteractivityHandler.updateZoom();
         this.locomotive.scaleLength(Scaler.xLimited(1));
         this.generateStaticBackground();

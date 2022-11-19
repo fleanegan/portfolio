@@ -1,3 +1,5 @@
+import {Scaler} from "./utils";
+
 export class DetailedContentView {
     createBlurryOverlay() {
         let div = document.createElement("DIV");
@@ -202,7 +204,7 @@ A directory:
 <hr>
 </nobr></body></html>`,
         );
-        if (window.innerWidth <= 650) {
+        if (Scaler.getWidth() <= 650) {
             modalBox.style.minWidth = "100%";
             console.log("wuhi\n\n\n\n")
         }

@@ -19,9 +19,9 @@ export class ContentPreview{
 
     constructor() {
         this.targets = [
-            new ContentTile(new Point(Scaler.x(ContentTile.radius / 4), window.innerHeight - Scaler.y(ContentTile.radius / 4)), iconBricolage, ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(window.innerWidth - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
-        new ContentTile(new Point(window.innerWidth / 2 - Scaler.x(ContentTile.radius / 2), window.innerHeight * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
+            new ContentTile(new Point(Scaler.x(ContentTile.radius / 4), Scaler.getHeight() - Scaler.y(ContentTile.radius / 4)), iconBricolage, ReferencePointMode.LowerLeft),
+            new ContentTile(new Point(Scaler.getWidth() - Scaler.x(ContentTile.radius / 2), Scaler.y(ContentTile.radius / 2)), iconInformatics, ReferencePointMode.UpperRight),
+        new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.radius / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
     }
 
     async draw(context: CanvasRenderingContext2D) {
@@ -116,11 +116,11 @@ export class ContentTile extends GameObject {
     }
 
     private moveIntoVisibleCanvas() {
-        while (this.center.x + ContentTile.radius * this.scaleFactor > window.innerWidth)
+        while (this.center.x + ContentTile.radius * this.scaleFactor > Scaler.getWidth())
             this.center.x--;
         while (this.center.x < 0)
             this.center.x++;
-        while (this.center.y + ContentTile.radius * this.scaleFactor > window.innerHeight)
+        while (this.center.y + ContentTile.radius * this.scaleFactor > Scaler.getHeight())
             this.center.y--;
         while (this.center.y < 0)
             this.center.y++;

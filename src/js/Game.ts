@@ -1,5 +1,6 @@
 import {Logic} from "./Logic";
 import {Point} from "./mathUtils";
+import {Scaler} from "./utils";
 
 type DrawingState = {
     pointerPosition: { x: number; y: number };
@@ -10,8 +11,8 @@ type DrawingState = {
 export default class Game {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private height: number = window.innerHeight;
-    private width: number = window.innerWidth;
+    private height: number = Scaler.getHeight();
+    private width: number = Scaler.getWidth();
     private logic: Logic;
     private drawingState: DrawingState = {
         pointerPosition: {x: 0, y: 0},
@@ -28,26 +29,37 @@ export default class Game {
         this.logic = new Logic(this.canvas, this.context);
     }
 
+    private getMousePos(evt: PointerEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: (evt.clientX - rect.left) / (rect.right - rect.left) * this.canvas.width,
+            y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * this.canvas.height
+        };
+    }
+
     addEventListeners(): void {
         this.canvas.addEventListener('pointerdown', (e) => {
-            this.drawingState.pointerPosition.x = e.clientX;
-            this.drawingState.pointerPosition.y = e.clientY;
+            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            this.drawingState.pointerPosition.x = x;
+            this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = true;
-            this.logic.handlePointerDown(new Point(e.clientX, e.clientY));
+            this.logic.handlePointerDown(new Point(x, y));
         });
 
         this.canvas.addEventListener('pointerup', (e) => {
-            this.drawingState.pointerPosition.x = e.clientX;
-            this.drawingState.pointerPosition.y = e.clientY;
+            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            this.drawingState.pointerPosition.x = x;
+            this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = false;
-            this.logic.handlePointerUp(new Point(e.clientX, e.clientY));
+            this.logic.handlePointerUp(new Point(x, y));
         });
 
         this.canvas.addEventListener('pointermove', (e) => {
-            this.drawingState.pointerPosition.x = e.clientX;
-            this.drawingState.pointerPosition.y = e.clientY;
+            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            this.drawingState.pointerPosition.x = x;
+            this.drawingState.pointerPosition.y = y;
             if (this.drawingState.isPointerDown)
-                this.logic.handlePointerPressedMove(new Point(e.clientX, e.clientY));
+                this.logic.handlePointerPressedMove(new Point(x, y));
         });
 
         document.addEventListener('keydown', (e) => {
@@ -58,8 +70,8 @@ export default class Game {
             this.drawingState.pressedKeys.delete(e.key);
         });
         window.addEventListener('resize', () => {
-            this.canvas.width = window.innerWidth
-            this.canvas.height = window.innerHeight
+            this.canvas.width = Scaler.getWidth()
+            this.canvas.height = Scaler.getHeight()
             this.logic.zoom();
         })
     }
