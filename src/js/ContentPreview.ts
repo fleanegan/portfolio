@@ -9,9 +9,7 @@ import {Scaler} from "./utils";
 enum ReferencePointMode {
     LowerLeft,
     UpperLeft,
-    LowerRight,
     UpperRight,
-    Middle,
 }
 
 export class ContentPreview{
@@ -112,7 +110,12 @@ export class ContentTile extends GameObject {
         else
             this.scaleFactor = calculatedFactor;
         this.moveIntoVisibleCanvas();
-        this.dragTarget.setCenter(new Point(this.center.x + ContentTile.radius * this.scaleFactor * 0.175, this.center.y + ContentTile.radius * this.scaleFactor * 0.3));
+        this.dragTarget.setCenter(
+            new Point(
+                this.center.x + ContentTile.radius * this.scaleFactor * 0.175,
+                this.center.y + ContentTile.radius * this.scaleFactor * 0.375
+            )
+        );
     }
 
     private moveIntoVisibleCanvas() {

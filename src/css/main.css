@@ -29,18 +29,6 @@ html, body {
     align-content: center;
 }
 
-@media only screen and (max-width: 1200px) {
-    .content{
-        width: 80%;
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    .content{
-        width: 100%;
-    }
-}
-
 @font-face {
     font-family: Gidole;
     font-style: normal;
@@ -80,4 +68,23 @@ canvas {
     margin: 0.5rem;
     font-family: 'Gidole', monospace;
     color: #efe7da;
+}
+
+.footerSpacer{
+    width: 5rem;
+}
+
+@media only screen and (max-width: 1200px) {
+    .content{
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .content{
+        width: 100%;
+    }
+    .header{
+        padding-left: 1rem;
+    }
 }
