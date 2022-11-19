@@ -10,15 +10,19 @@ export class Logic {
     private rails: Rails;
     private background: ImageData;
     private locomotive: Locomotive;
-    private detailedContentView: DetailedContentView;
     private railInteractivityHandler: RailInteractivityHandler;
     private contentPreview: ContentPreview;
+    private detailedContentView: DetailedContentView;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
 
-    constructor(private canvas: HTMLCanvasElement, private context: CanvasRenderingContext2D) {
+    constructor() {
     }
 
-    async init() {
-        this.detailedContentView = new DetailedContentView();
+    async init(detailedContentView: DetailedContentView) {
+        this.canvas = <HTMLCanvasElement>document.getElementById("canvas");
+        this.context = this.canvas.getContext('2d');
+        this.detailedContentView = detailedContentView;
         this.rails = new Rails([
             [1500.4928366762176, 147.263644773358],
             [218.08595988538679, 98.17576318223868],

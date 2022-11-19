@@ -1,6 +1,8 @@
 import {Logic} from "./Logic";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
+import {DetailedContentView} from "./DetailedContentView";
+import legal from "../legal.html"
 
 type DrawingState = {
     pointerPosition: { x: number; y: number };
@@ -19,6 +21,7 @@ export default class Game {
         isPointerDown: false,
         pressedKeys: new Set(),
     };
+    private detailedContentView: DetailedContentView;
 
     constructor() {
         this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
@@ -26,7 +29,8 @@ export default class Game {
         this.canvas.height = this.height;
         this.context = this.canvas.getContext("2d");
         this.addEventListeners();
-        this.logic = new Logic(this.canvas, this.context);
+        this.detailedContentView = new DetailedContentView();
+        this.logic = new Logic();
     }
 
     private getMousePos(evt: PointerEvent) {
@@ -88,6 +92,12 @@ export default class Game {
     }
 
     async init() {
-        await this.logic.init();
+        const legalLink = document.getElementById("legalLink");
+        const self = this;
+        legalLink.onclick = function () {
+            self.detailedContentView.setContent(legal);
+            self.detailedContentView.show();
+        };
+        await this.logic.init(this.detailedContentView);
     }
 }

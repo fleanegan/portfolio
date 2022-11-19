@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'production', //add this line here
+    mode: 'production',
     entry: './src/js/app.ts',
     output: {
         path: __dirname + "/dist",
@@ -26,6 +26,10 @@ module.exports = {
                 ]
             },
             {
+                test: /\.html$/,
+                use: 'raw-loader'
+            },
+            {
                 test: /\.css$/,
                 exclude: /node_modules/,
                 use: [
@@ -34,11 +38,8 @@ module.exports = {
                 ]
             },
             {
-                test: /\.mp3$/,
-                exclude: /node_modules/,
-                use: [
-                    {loader: 'file-loader'}
-                ]
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                type: 'asset/resource',
             },
             {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,

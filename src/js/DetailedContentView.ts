@@ -1,5 +1,4 @@
 import {Scaler} from "./utils";
-import legal from "../legal.html"
 
 export class DetailedContentView {
     createBlurryOverlay() {
@@ -86,7 +85,6 @@ export class DetailedContentView {
         this.createBlurryOverlay();
         this.createBox();
         this.hide();
-        this.setContent();
     }
 
     isHidden(): boolean{
@@ -107,7 +105,7 @@ export class DetailedContentView {
         this.isHiddenFlag = false;
     }
 
-    setContent(){
+    setContent(rawHTML: string) {
         const modalBox = document.getElementById("ModalBox");
         let contentHolder = document.createElement("content");
         contentHolder.setAttribute("style", "display: flex;" +
@@ -126,7 +124,7 @@ export class DetailedContentView {
         modalBox.appendChild(contentHolder);
         contentHolder.insertAdjacentHTML(
             'beforeend',
-            legal
+            rawHTML
         );
     }
 }
