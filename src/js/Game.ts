@@ -72,6 +72,8 @@ export default class Game {
 
         document.addEventListener('keydown', (e) => {
             this.drawingState.pressedKeys.add(e.key);
+            if (e.key === "Escape")
+                this.detailedContentView.hide();
         });
 
         document.addEventListener('keyup', (e) => {

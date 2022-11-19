@@ -4,17 +4,6 @@ export class DetailedContentView {
     createBlurryOverlay() {
         let blur = document.createElement("div");
         blur.setAttribute("class", "blur");
-        blur.setAttribute("style",
-            "position: fixed;" +
-            "top: 0;" +
-            "bottom: 0;" +
-            "left: 0;" +
-            "right: 0;" +
-            "width: 100%;" +
-            "height: 100%;" +
-            "background: rgba(0, 0, 0, 0.5);" +
-            "backdrop-filter: blur(3px);" +
-            "z-index: 1;");
         document.body.appendChild(blur);
         blur.addEventListener("click", () => {
             this.hide();
