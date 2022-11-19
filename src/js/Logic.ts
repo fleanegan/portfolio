@@ -5,6 +5,7 @@ import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
 import {RailInteractivityHandler} from "./RailInteractivityHandler";
 import {ContentPreview} from "./ContentPreview";
+import {AnimateLinearButton, CustomAnimation, Mode} from "./Animation";
 
 export class Logic {
     private rails: Rails;
@@ -15,6 +16,8 @@ export class Logic {
     private detailedContentView: DetailedContentView;
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
+    private animations: CustomAnimation[] = [];
+    private cycleCount: number = 0;
 
     constructor() {
     }
@@ -23,19 +26,22 @@ export class Logic {
         this.canvas = <HTMLCanvasElement>document.getElementById("canvas");
         this.context = this.canvas.getContext('2d');
         this.detailedContentView = detailedContentView;
-        this.rails = new Rails([
-            [1500.4928366762176, 147.263644773358],
-            [218.08595988538679, 98.17576318223868],
-            [219.62177650429797, 545.5448658649399],
-            [804.7679083094554, 565.626271970398],
-            [932.2406876790828, 1077.7021276595744],
-            [1541.9598853868195, 1054.2738205365406],
-            [1957.666485605649, 785.3950413223142]
-        ]);
+        this.rails = new Rails([[1500.4928366762176, 147.263644773358], [218.0859598853868, 98.17576318223868], [233.63027113720958, 454.75211344326783], [732.298728249195, 591.3103282673394], [806.6857356636901, 965.1881591448949], [1445.8629845586108, 978.4462382540282], [1957.666485605649, 785.3950413223142],]);
         this.contentPreview = new ContentPreview();
         this.railInteractivityHandler = new RailInteractivityHandler(this.rails, this.contentPreview);
         this.locomotive = new Locomotive(this.rails.path, Scaler.xLimited(1) * 175);
         await this.generateStaticBackground();
+    }
+
+    private animate() {
+        const p0 = this.rails.splineBasePoints[0].center;
+        const p1 = new Point(p0.x - 25, p0.y + 25);
+
+        if (this.animations.length === 0) {
+            this.animations.push(new AnimateLinearButton(p0, p1, 5000, Mode.Loop));
+            this.animations[0].activate(new Date().getTime());
+        } else
+            this.animations[0].run(new Date().getTime(), this.context);
     }
 
     private async generateStaticBackground() {
@@ -55,10 +61,10 @@ export class Logic {
         return this.background;
     }
 
-    process(pressedKeys: Direction.Idle | Direction.Forward | Direction.Backwards) {
+    process(newDirection: Direction) {
         if (this.detailedContentView.isHidden() == false)
             return;
-        this.updateLocomotiveDirection(pressedKeys);
+        this.updateLocomotiveDirection(newDirection);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
             this.detailedContentView.show();
             this.railInteractivityHandler.autopilotDestination = null;
@@ -70,15 +76,16 @@ export class Logic {
         if (this.railInteractivityHandler.isPathDragged())
             this.contentPreview.drawTargets(this.context);
         this.locomotive.draw(this.context);
+        this.animate();
+        if (newDirection != Direction.Idle)
+            this.animations[0].deactivate();
     }
 
     updateLocomotiveDirection(userInput: Direction) {
         if (this.locomotive.autopilotDestinationAsProgress == null) {
             this.locomotive.setDirection(userInput);
-        } else {
+        } else
             this.locomotive.setDirection(Direction.Auto);
-            console.log("starting in auto");
-        }
     }
 
     zoom() {
@@ -90,6 +97,8 @@ export class Logic {
 
     handlePointerDown(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerDown(pointerPosition);
+        if (this.railInteractivityHandler.isPathDragged())
+            this.animations[0].deactivate();
     }
 
     handlePointerUp(pointerPosition: Point) {

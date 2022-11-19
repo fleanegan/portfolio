@@ -58,7 +58,6 @@ export default class Game {
             this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = false;
             this.drawingState.pressedKeys.delete("ForwardButton");
-            console.log("user input has fwdb: " + this.drawingState.pressedKeys.has("ForwardButton"));
             this.logic.handlePointerUp(new Point(x, y));
         });
 

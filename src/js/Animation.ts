@@ -1,3 +1,6 @@
+import {Point} from "./mathUtils";
+import {DragItem} from "./Background";
+
 export enum Mode {
     Loop,
     Normal,
@@ -6,26 +9,27 @@ export enum Mode {
 
 export class CustomAnimation {
     private lastTimeStamp: number = 0;
-    isActivated: boolean = false;
+    protected timeStampOnStartInMs: number = 0;
+    private _isActivated: boolean = false;
 
-    constructor(private durationInSeconds: number, private timeStampOnStartInSeconds: number, private mode: Mode = Mode.Normal) {
+    constructor(protected durationInMs: number, private mode: Mode = Mode.Normal) {
     }
 
-    run(currentTimeInSeconds: number) {
-        if (this.isActivated === false)
+    run(currentTimeInMs: number, context?: CanvasRenderingContext2D) {
+        if (this._isActivated === false)
             return;
         if (this.mode === Mode.Normal)
         {
-            this.lastTimeStamp = (currentTimeInSeconds - this.timeStampOnStartInSeconds) / this.durationInSeconds;
+            this.lastTimeStamp = (currentTimeInMs - this.timeStampOnStartInMs) / this.durationInMs;
             if (this.lastTimeStamp > 1) {
                 this.lastTimeStamp = 1;
-                this.isActivated = true;
+                this._isActivated = true;
             }
         }
         else if (this.mode === Mode.Loop) {
-            const t = (currentTimeInSeconds - this.timeStampOnStartInSeconds) % this.durationInSeconds;
-            this.lastTimeStamp = (2 * t) / this.durationInSeconds;
-            if (t > this.durationInSeconds / 2)
+            const t = (currentTimeInMs - this.timeStampOnStartInMs) % this.durationInMs;
+            this.lastTimeStamp = (2 * t) / this.durationInMs;
+            if (t > this.durationInMs / 2)
                 this.lastTimeStamp = 2 - this.lastTimeStamp;
         }
     }
@@ -33,8 +37,38 @@ export class CustomAnimation {
     getProgress(): number {
         return this.lastTimeStamp;
     }
+
+    activate(timeStampOnStartInMs: number) {
+        this.timeStampOnStartInMs = timeStampOnStartInMs;
+        this._isActivated = true;
+    }
+
+    isActivated(){
+        return this._isActivated;
+    }
+
+
+    deactivate() {
+        this._isActivated = false;
+    }
 }
 
-export class AnimateLinearButton {
+export class AnimateLinearButton extends CustomAnimation{
+    currentPoint: Point = new Point(0, 0);
+    private obj: DragItem;
 
+    constructor(private start: Point, private end: Point, durationInMs: number, mode: Mode = Mode.Normal) {
+        super(durationInMs, mode);
+        this.obj = new DragItem(start, {strokeColor: "#ff0000", fillColor: "#000000", lineWidth: 5});
+    }
+
+    run(currentTimeInMilliseconds: number, context: CanvasRenderingContext2D) {
+        if (! this.isActivated())
+            return;
+        super.run(currentTimeInMilliseconds);
+        this.currentPoint.x = this.start.x + Math.round((this.end.x - this.start.x) * this.getProgress());
+        this.currentPoint.y = this.start.y + Math.round((this.end.y - this.start.y) * this.getProgress());
+        this.obj.setCenter(this.currentPoint);
+        this.obj.draw(context)
+    }
 }
