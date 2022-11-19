@@ -43,7 +43,7 @@ export class ContentPreview {
     getTargetsUnderPointer(pointerPosition: Point): ContentTile[] {
         for (const target of this.targets) {
             const distance = target.getDragTargetCenter().distanceTo(pointerPosition);
-            if (distance < ContentTile.diameter * 2) {
+            if (distance < DragItem.radius * 2) {
                 return [target];
             }
         }
