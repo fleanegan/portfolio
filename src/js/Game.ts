@@ -97,8 +97,6 @@ export default class Game {
     public render(): void {
         let userInput: Direction = Direction.Idle;
 
-        // console.log("user input has fwdb: " + this.drawingState.pressedKeys.has("ForwardButton"));
-        // console.log("user input has keypress: " + this.drawingState.pressedKeys.has("ArrowRight"));
         if (this.drawingState.pressedKeys.has("ForwardButton") ||
             this.drawingState.pressedKeys.has("ArrowRight"))
             userInput = Direction.Forward;
