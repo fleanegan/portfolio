@@ -17,7 +17,7 @@
 		"./src/js/app.ts",
 	],
 	"include": [
-		"src", "./assets/index.d.ts"
+		"src", "./assets/index.d.ts", "./fonts/fonts.d.ts"
 	]
 }
 

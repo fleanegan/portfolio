@@ -2,8 +2,11 @@ import {DetailedContentView} from "./DetailedContentView";
 
 declare var require: any;
 require('../css/main.css');
+require('../css/modal.css');
+require('../legal.html');
 
 import Game from './Game';
+import font from '../../fonts/Gidole-Regular.ttf'
 
 class App {
 	private _game: Game;

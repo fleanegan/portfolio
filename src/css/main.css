@@ -8,13 +8,14 @@ html, body {
     display: flex;
     align-content: center;
     flex-direction: row;
+    background-color: #8a403b;
 }
 
 .headerBackground{
     position: absolute;
     width: 100%;
     height: 5rem;
-    background-color: aqua;
+    background-color: #590600;
     top: 0%;
     z-index: -1;
 }
@@ -28,9 +29,21 @@ html, body {
 }
 
 @media only screen and (max-width: 600px) {
-    body {
-        background-color: lightblue;
+    .content{
+        width: 100%;
     }
+}
+
+@font-face {
+    font-family: Gidole;
+    font-style: normal;
+    font-weight: 400;
+    src: url('../../fonts/Gidole-Regular.ttf') format('ttf');
+}
+
+.header{
+    font-family: 'Gidole', monospace;
+    color: #efe7da;
 }
 
 .headerDiv{
@@ -39,16 +52,26 @@ html, body {
     display: flex;
     flex-direction: column;
     align-content: center;
-    background-color: rebeccapurple;
 }
 
 canvas {
     -webkit-tap-highlight-color: transparent;
     z-index: 1;
     width: 100%;
-    height: 90%;
+    height: 100%;
 }
 
-.modal {
-    color: red;
+.footerDiv{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    min-height: 0.75rem;
+
+}
+
+.footer {
+    margin: 0.5rem;
+    font-family: 'Gidole', monospace;
+    color: #efe7da;
 }
