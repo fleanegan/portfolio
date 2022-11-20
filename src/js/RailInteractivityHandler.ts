@@ -4,7 +4,7 @@ import {DragItem, HighlightMode, Rails} from "./Background";
 import {ContentPreview, ContentTile} from "./ContentPreview";
 
 export class RailInteractivityHandler {
-    autopilotDestination: Point | null = null;
+    autopilotDestination: ContentTile = null;
     activeDragPoint: DragItem[] = [];
 
     constructor(private rails: Rails, private contentPreview: ContentPreview) {
@@ -62,7 +62,7 @@ export class RailInteractivityHandler {
     private autopilotToSelectedTarget(pointerPosition: Point) {
         const target: ContentTile[] = this.contentPreview.getTargetsUnderPointer(pointerPosition);
         if (target.length != 0)
-            this.autopilotDestination = target[0].getDragTargetCenter();
+            this.autopilotDestination = target[0];
     }
 
     private autoRouteClosestSplineBaseIntoClickedTarget(pointerPosition: Point) {
@@ -80,7 +80,7 @@ export class RailInteractivityHandler {
                 }
             })
             nearestBasePoint.setCenter(targets[0].getDragTargetCenter());
-            this.autopilotDestination = targets[0].getDragTargetCenter();
+            this.autopilotDestination = targets[0];
         }
     }
 
@@ -126,6 +126,5 @@ export class RailInteractivityHandler {
 
     isNearTile(point: Point): boolean {
          return this.contentPreview.getTileUnderPointer(point).length != 0;
-        // return this.contentPreview.getTargetsUnderPointer(point).length != 0;
     }
 }

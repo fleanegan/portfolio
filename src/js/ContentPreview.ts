@@ -4,6 +4,9 @@ import {GameObject} from "./GameObject";
 import iconMaschinenbau from "../../assets/maschinenbau.png";
 import iconInformatics from "../../assets/informatics.png";
 import iconBricolage from "../../assets/bricolage.png";
+import contentMechanicalEngineering from "../html/maschinenbau.html"
+import contentLampBuilding from "../html/bricolage.html"
+import contentProgramming from "../html/informatics.html"
 import {Scaler} from "./utils";
 
 enum ReferencePointMode {
@@ -17,9 +20,9 @@ export class ContentPreview {
 
     constructor() {
         this.targets = [
-            new ContentTile(new Point(Scaler.x(ContentTile.diameter / 4), Scaler.getHeight() - Scaler.y(ContentTile.diameter / 4)), iconBricolage, ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.diameter / 2), Scaler.y(ContentTile.diameter / 2)), iconInformatics, ReferencePointMode.UpperRight),
-            new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.diameter / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, ReferencePointMode.UpperLeft)];
+            new ContentTile(new Point(Scaler.x(ContentTile.diameter / 4), Scaler.getHeight() - Scaler.y(ContentTile.diameter / 4)), iconBricolage, contentLampBuilding, ReferencePointMode.LowerLeft),
+            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.diameter / 2), Scaler.y(ContentTile.diameter / 2)), iconInformatics, contentProgramming, ReferencePointMode.UpperRight),
+            new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.diameter / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, contentMechanicalEngineering, ReferencePointMode.UpperLeft)];
     }
 
     async draw(context: CanvasRenderingContext2D) {
@@ -74,7 +77,7 @@ export class ContentTile extends GameObject {
     private img: HTMLImageElement;
     private scaleFactor: number = 1;
 
-    constructor(rawCenter: Point, private imgSrc: any, private referencePointMode?: ReferencePointMode) {
+    constructor(rawCenter: Point, private imgSrc: any, private contentHtml: string, private referencePointMode?: ReferencePointMode) {
         if (referencePointMode === ReferencePointMode.LowerLeft) {
             rawCenter.y -= Scaler.y(ContentTile.diameter);
         }
@@ -164,5 +167,9 @@ export class ContentTile extends GameObject {
             this.img.src = this.imgSrc;
         });
         context.drawImage(this.img, x, y, w, h);
+    }
+
+    getContent() {
+        return this.contentHtml;
     }
 }

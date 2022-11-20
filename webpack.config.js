@@ -6,6 +6,7 @@ module.exports = {
     output: {
         path: __dirname + "/dist",
         filename: "bundle.js",
+        assetModuleFilename: '[name][ext]'
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
@@ -39,6 +40,7 @@ module.exports = {
             },
             {
                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                exclude: /node_modules/,
                 type: 'asset/resource',
             },
             {

@@ -5,6 +5,7 @@ require('../css/main.css');
 require('../css/modal.css');
 require('../legal.html');
 require('../../assets/contactCode.png');
+require('../../assets/arrow.png');
 
 
 import Game from './Game';

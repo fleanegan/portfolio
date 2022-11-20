@@ -34,14 +34,15 @@ export class Logic {
     }
 
     private animate() {
-        const p0 = this.rails.splineBasePoints[3].center;
-        const p1 = new Point(p0.x - 25, p0.y + 25);
+        let p0 = this.rails.splineBasePoints[3].center;
+        const p1 = new Point(p0.x - 12, p0.y + 12);
+        p0 = new Point(p1.x + 24, p1.y - 24);
         const p2 = this.contentPreview.targets[1].getDragTargetCenter();
         const p3 = new Point(p2.x - 25, p2.y + 25);
 
         if (this.animations.length === 0) {
-            this.animations.push(new AnimationNudge(p0, p1, 2000, "Drag me!", Mode.Loop));
-            this.animations.push(new AnimationNudge(p2, p3, 2000, "Click me!", Mode.Loop));
+            this.animations.push(new AnimationNudge(p0, p1, 5000, "Drag me!", Mode.Loop));
+            this.animations.push(new AnimationNudge(p2, p3, 10000, "Click me!", Mode.Loop));
             this.animations[0].activate(new Date().getTime());
             this.animations[1].activate(new Date().getTime());
             this.animations[1].deactivate();
@@ -117,7 +118,8 @@ export class Logic {
             this.generateStaticBackground();
         }
         if (this.railInteractivityHandler.autopilotDestination != null && this.locomotive.direction != Direction.Auto) {
-            this.locomotive.setDestination(this.railInteractivityHandler.autopilotDestination);
+            this.locomotive.setDestination(this.railInteractivityHandler.autopilotDestination.getDragTargetCenter());
+            this.detailedContentView.setContent(this.railInteractivityHandler.autopilotDestination.getContent())
         }
     }
 
