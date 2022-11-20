@@ -50,6 +50,10 @@ export default class Game {
             this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = true;
             this.logic.handlePointerDown(new Point(x, y));
+                const target = e.target as Element;
+            if (target.hasPointerCapture(e.pointerId)) {
+                target.releasePointerCapture(e.pointerId);
+            }
         });
 
         this.canvas.addEventListener('pointerup', (e) => {
@@ -78,19 +82,24 @@ export default class Game {
         document.addEventListener('keyup', (e) => {
             this.drawingState.pressedKeys.delete(e.key);
         });
+
         window.addEventListener('resize', () => {
             this.canvas.width = Scaler.getWidth()
             this.canvas.height = Scaler.getHeight()
             this.logic.zoom();
-        })
+        });
 
-        document.getElementById("forwardButton").addEventListener("pointerdown", () =>{
-                this.drawingState.pressedKeys.add("ForwardButton");
-        })
+        document.getElementById("forwardButton").addEventListener("pointerdown", () => {
+            this.drawingState.pressedKeys.add("ForwardButton");
+        });
 
-        document.getElementById("forwardButton").addEventListener("pointerup", () =>{
-                this.drawingState.pressedKeys.delete("ForwardButton");
-        })
+        document.getElementById("forwardButton").addEventListener("pointerup", () => {
+            this.drawingState.pressedKeys.delete("ForwardButton");
+        });
+
+        document.getElementById("forwardButton").addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+        });
     }
 
     public render(): void {
