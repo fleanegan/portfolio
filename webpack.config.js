@@ -6,13 +6,15 @@ module.exports = {
     output: {
         path: __dirname + "/dist",
         filename: "bundle.js",
-        assetModuleFilename: '[name][ext]'
+        assetModuleFilename: '[name][ext]',
+        publicPath: "/",
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
     },
     devServer: {
-        static: './dist'
+        static: './dist',
+        historyApiFallback: true,
     },
     performance: {
         hints: false
