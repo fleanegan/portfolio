@@ -14,7 +14,9 @@ module.exports = {
     },
     devServer: {
         static: './dist',
-        historyApiFallback: true,
+        historyApiFallback: {
+            rewrites: [{ from: /^.*[^/]$/, to: '/' }],
+        },
     },
     performance: {
         hints: false
