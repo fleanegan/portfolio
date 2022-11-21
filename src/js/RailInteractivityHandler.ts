@@ -44,7 +44,6 @@ export class RailInteractivityHandler {
             this.contentPreview.setTargetHightlightMode(HighlightMode.None);
             this.autopilotToSelectedTarget(pointerPosition);
             this.activeDragPoint.pop();
-            this.printBasePointCoordinates();
         }
         this.rails.shouldRedrawDraggable = false;
     }

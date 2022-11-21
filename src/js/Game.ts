@@ -126,7 +126,15 @@ export default class Game {
     async init() {
         this.setUpClickable("legalLink", legalPage);
         this.setUpClickable("contactLink", contactPage);
-        this.setUpClickable("titleLink", contactPage);
+        this.setUpReloadButton();
         await this.logic.init(this.detailedContentView);
+    }
+
+    private setUpReloadButton() {
+        const legalLink = document.getElementById("titleLink");
+        const self = this;
+        legalLink.onclick = function () {
+            location.reload()
+        };
     }
 }

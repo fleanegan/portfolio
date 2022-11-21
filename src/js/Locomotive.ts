@@ -67,11 +67,11 @@ export class Locomotive {
         let difference = this.autopilotDestinationAsProgress - this.trainProgress;
         if (difference == 0)
             return;
-        if (difference > 0.5)
+        if (difference > 1)
             difference -= 1;
-        if (difference < -0.5)
+        if (difference < 0)
             difference += 1;
-        this.autopilotVelocity = difference / 10;
+        this.autopilotVelocity = difference / 30;
     }
 
     calcAxlePositions(): Point[] {
