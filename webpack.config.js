@@ -7,7 +7,7 @@ module.exports = {
         path: __dirname + "/dist",
         filename: "bundle.js",
         assetModuleFilename: '[name][ext]',
-        publicPath: "/",
+        publicPath: "/portfolio/",
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
