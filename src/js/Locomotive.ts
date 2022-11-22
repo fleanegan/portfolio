@@ -98,7 +98,7 @@ export class Locomotive {
 
     calcIndexRearWheels(): number {
         let progressRearWheels = this.truncateNormalizedPathLength(
-            this.trainProgress + this.getTrainLengthAsNormalizedPathLength());
+            this.trainProgress);
         return Math.round(progressRearWheels * this.path.getPoints().length);
     }
 
@@ -153,7 +153,7 @@ export class Locomotive {
     }
 
     getCoordinatesOfChimney(): Point {
-        let progressOfChimney: number = this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 1.5;
+        let progressOfChimney: number = this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 0.5;
         if (progressOfChimney > 1)
             progressOfChimney -= 1;
         const coords = this.path.interpolator.getPointAt(progressOfChimney);

@@ -14,7 +14,7 @@ export class DetailedContentView {
     createBox() {
         let modalBox = document.createElement("div");
         modalBox.setAttribute("id", "ModalBox");
-        modalBox.setAttribute("class", "ModalBox");
+        modalBox.setAttribute("class", "modalBox");
         let newcloseButton = document.createElement("button");
         let newContent = document.createTextNode("X");
         newcloseButton.appendChild(newContent);
@@ -24,9 +24,6 @@ export class DetailedContentView {
         newcloseButton.addEventListener("click", () => {
             this.hide();
         });
-        if (Scaler.getWidth() <= 650) {
-            modalBox.style.minWidth = "100%";
-        }
         document.body.appendChild(modalBox);
         modalBox.parentElement.style.display = "flex";
         modalBox.parentElement.style.justifyContent = "center";
