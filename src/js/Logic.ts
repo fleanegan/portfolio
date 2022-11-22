@@ -5,7 +5,7 @@ import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
 import {RailInteractivityHandler} from "./RailInteractivityHandler";
 import {ContentPreview} from "./ContentPreview";
-import {AnimationNudge, CustomAnimation, Mode} from "./Animation";
+import {AnimationHandler} from "./AnimationHandler";
 
 export class Logic {
     private rails: Rails;
@@ -16,8 +16,7 @@ export class Logic {
     private detailedContentView: DetailedContentView;
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private animations: CustomAnimation[] = [];
-    private cycleCount: number = 0;
+    private animationHandler: AnimationHandler;
 
     constructor() {
     }
@@ -31,28 +30,8 @@ export class Logic {
         this.railInteractivityHandler = new RailInteractivityHandler(this.rails, this.contentPreview);
         this.locomotive = new Locomotive(this.rails.path, Scaler.xLimited(1) * 175);
         await this.generateStaticBackground();
-    }
-
-    private animate() {
-        let p0 = this.rails.splineBasePoints[3].center;
-        const p1 = new Point(p0.x - 12, p0.y + 12);
-        p0 = new Point(p1.x + 24, p1.y - 24);
-        const p2 = this.contentPreview.targets[1].getDragTargetCenter();
-        const p3 = new Point(p2.x - 25, p2.y + 25);
-
-        if (this.animations.length === 0) {
-            this.animations.push(new AnimationNudge(p0, p1, 5000, "Drag me!", Mode.Loop));
-            this.animations.push(new AnimationNudge(p2, p3, 10000, "Click me!", Mode.Loop));
-            this.animations[0].activate(new Date().getTime());
-            this.animations[1].activate(new Date().getTime());
-            this.animations[1].deactivate();
-        } else{
-            this.animations.forEach((animation) => {
-                if (animation.isActivated()){
-                    animation.run(new Date().getTime(), this.context);
-                }
-            })
-        }
+        this.animationHandler = new AnimationHandler();
+        this.animationHandler.init(this.rails.splineBasePoints[3].center, this.locomotive);
     }
 
     private async generateStaticBackground() {
@@ -87,9 +66,9 @@ export class Logic {
         if (this.railInteractivityHandler.isPathDragged())
             this.contentPreview.drawTargets(this.context);
         this.locomotive.draw(this.context);
-        this.animate();
+        this.animationHandler.run(this.context)
         if (newDirection != Direction.Idle)
-            this.deactivateHelp();
+            this.animationHandler.deactivateHelp();
     }
 
     updateLocomotiveDirection(userInput: Direction) {
@@ -104,12 +83,13 @@ export class Logic {
         this.railInteractivityHandler.updateZoom();
         this.locomotive.scaleLength(Scaler.xLimited(1));
         this.generateStaticBackground();
+        this.animationHandler.updateZoom();
     }
 
     handlePointerDown(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerDown(pointerPosition);
         if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTile(pointerPosition))
-            this.deactivateHelp();
+            this.animationHandler.deactivateHelp();
     }
 
     handlePointerUp(pointerPosition: Point) {
@@ -126,11 +106,6 @@ export class Logic {
     handlePointerPressedMove(pointerPosition: Point) {
         this.railInteractivityHandler.handlePointerPressedMove(pointerPosition);
         if (this.railInteractivityHandler.isPathDragged() || this.railInteractivityHandler.isNearTile(pointerPosition))
-            this.deactivateHelp();
-    }
-
-    private deactivateHelp() {
-            this.animations[0].deactivate();
-            this.animations[1].deactivate();
+            this.animationHandler.deactivateHelp();
     }
 }

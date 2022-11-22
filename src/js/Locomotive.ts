@@ -17,10 +17,13 @@ export class Locomotive {
     private autopilotVelocity: number = 0;
     autopilotDestinationAsProgress: number | null = null;
     direction: Direction = Direction.Idle;
+    private timeOfLastVapor: Date;
+    private maxVelocity: number = 0.003;
 
     constructor(public path: Path, private length: number) {
         this.img = new Image();
         this.img.src = icon;
+        this.timeOfLastVapor = new Date();
     }
 
     hasReachedDestination(): boolean {
@@ -53,7 +56,7 @@ export class Locomotive {
         } else {
             if (Direction.Idle === this.direction) {
                 this.velocity *= 0.95;
-            } else if (Math.abs(this.velocity) <= 0.003) {
+            } else if (Math.abs(this.velocity) <= this.maxVelocity) {
                 this.velocity += 0.00025 * this.direction;
             }
         }
@@ -83,7 +86,7 @@ export class Locomotive {
         let frontWheels = Point.fromArr(this.path.getPoints()[indexFrontWheels]);
 
         while (frontWheels.distanceTo(rearWheels) < this.length * proportionsWheel
-        && indexFrontWheels < this.path.getPoints().length) {
+        && indexFrontWheels < this.path.getPoints().length - 1) {
             frontWheels.x = this.path.getPoints()[indexFrontWheels][0]
             frontWheels.y = this.path.getPoints()[indexFrontWheels][1]
             indexFrontWheels++;
@@ -147,5 +150,28 @@ export class Locomotive {
         this.autopilotDestinationAsProgress = null;
         this.velocity = 0;
         this.direction = Direction.Idle;
+    }
+
+    getCoordinatesOfChimney(): Point {
+        let progressOfChimney: number = this.trainProgress + this.getTrainLengthAsNormalizedPathLength() * 1.5;
+        if (progressOfChimney > 1)
+            progressOfChimney -= 1;
+        const coords = this.path.interpolator.getPointAt(progressOfChimney);
+        return new Point(coords[0], coords[1]);
+    }
+
+    shouldExpulseVapor():boolean {
+        const now: Date = new Date();
+        const diff: number = now.getTime() - this.timeOfLastVapor.getTime();
+        if (Math.abs(this.velocity) > this.maxVelocity * 0.8 && diff > 50 && this.autopilotDestinationAsProgress == null){
+            this.timeOfLastVapor = now;
+            return true;
+        }
+        else if (diff > 1250){
+            this.timeOfLastVapor = now;
+            return true;
+        }
+        else
+            return false;
     }
 }

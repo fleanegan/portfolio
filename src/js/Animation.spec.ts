@@ -30,11 +30,11 @@ describe('Animation', () => {
 
     it('should return active if t >= 1', function () {
         let animation = new CustomAnimation(0);
-    animation.activate(0);
+        animation.activate(0);
 
         animation.run(123);
 
-        expect(animation.isActivated()).toBe(true);
+        expect(animation.isActivated()).toBe(false);
     });
 
     it('should be active and 1 if t = 0.5 and in loopmode', function () {
