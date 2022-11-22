@@ -39,10 +39,7 @@ export class AnimationHandler {
             if (animation.isActivated())
                 animation.run(new Date().getTime(), context);
             if (animation.isDone())
-            {
-                console.log("removing ani");
                 this.animations.splice(i, 1);
-            }
         }
     }
 
