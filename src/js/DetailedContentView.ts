@@ -1,4 +1,3 @@
-import {Scaler} from "./utils";
 
 export class DetailedContentView {
     createBlurryOverlay() {

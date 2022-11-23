@@ -2,8 +2,8 @@ import {Logic} from "./Logic";
 import {Point} from "./mathUtils";
 import {Scaler} from "./utils";
 import {DetailedContentView} from "./DetailedContentView";
-import legalPage from "../legal.html"
-import contactPage from "../contact.html"
+import legalPage from "../html/legal.html"
+import contactPage from "../html/contact.html"
 import {Direction} from "./Locomotive";
 
 type DrawingState = {

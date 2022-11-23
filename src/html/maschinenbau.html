@@ -1,13 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- HTML Codes by Quackit.com -->
     <title>
         Mechanical Engineering</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--    <link type="text/css" href="./modalContent.css">-->
+    <style>
+        .gallery {
+            width: 40rem;
+            height: 60%;
+            margin: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            grid-gap: 1.5rem;
+        }
+
+		.gallery .left-col, .gallery .right-col {
+			display: grid;
+            grid-gap: 1.5rem;
+		}
+		.gallery .left-col {grid-template-rows: 3fr 2fr;}
+		.gallery .right-col {grid-template-rows: 2fr 3fr;}
+
+        .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    </style>
 </head>
 <body>
-<h1>Mechanical Engineering</h1>
+<h1>Mechanical Engineering test</h1>
+<div class="gallery">
+	<div class="left-col">
+		<img src="./overall.png" alt="Overview of the hexapod">
+		<img src="./only.png" alt="Test geometry">
+	</div>
+	<div class="right-col">
+		<img src="./x_act.png" alt="Superposition of programmed direction and compensated way">
+		<img src="./full.png" alt="Tool on test geometry">
+	</div>
+</div>
 </body>
 </html>
 </body>

@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start:dev": "rimraf .parcel-cache dist && parcel ./src/index.html",
+    "start:dev": "rimraf .parcel-cache dist && parcel src/html/index.html",
     "dev": "webpack-dev-server --open",
     "prod": "webpack --production",
     "test": "jest"

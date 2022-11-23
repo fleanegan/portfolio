@@ -3,9 +3,14 @@ import {DetailedContentView} from "./DetailedContentView";
 declare var require: any;
 require('../css/main.css');
 require('../css/modal.css');
-require('../legal.html');
+require('../css/modalContent.css');
+require('../html/legal.html');
 require('../../assets/contactCode.png');
 require('../../assets/arrow.png');
+require('../../assets/maschinenbau/only.png');
+require('../../assets/maschinenbau/overall.png');
+require('../../assets/maschinenbau/full.png');
+require('../../assets/maschinenbau/x_act.png');
 
 
 import Game from './Game';

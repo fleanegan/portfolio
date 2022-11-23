@@ -1,6 +1,8 @@
 import {Path} from "./Background";
 import {getIndexOfClosestValue, Point} from "./mathUtils";
 import icon from '../../assets/locomotive.png'
+// import icon from '../../assets/maschinenbau/x_act.png'
+
 
 export enum Direction {
     Backwards = -1,
