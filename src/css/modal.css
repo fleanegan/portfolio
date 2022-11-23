@@ -3,37 +3,26 @@
 }
 
 .modalBox {
-    display: flex;
-    flex-direction: column;
-    background-color: #fdfffc;
-    justify-content: right;
-    gap: 0.4rem;
+    display: block;
+    position: absolute;
     max-width: 80%;
     min-width: 60%;
     max-height: 80%;
     min-height: 80%;
+    top: 10%;
+    gap: 0.4rem;
+    background-color: #fdfffc;
     padding: 1.3rem;
     overflow-y: auto;
-    position: absolute;
-    top: 10%;
-    box-shadow: 0px 0px 10px 2px rgba(255, 255, 255, 0.39);
+    overflow-x: hidden;
+    box-shadow: 0px 0px 20px 2px rgba(255, 255, 255, 0.39);
     z-index: 4;
     border: 1px solid #ddd
 }
 
-.modalContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    gap: 0.4rem;
-    width: 100%;
-    height: 80%;
-    padding: 64px 0 0 0;
-    font-family: monospace;
-}
-
 .modalCloseButton {
-    position: fixed;
+    position: absolute;
+    display: block;
     z-index: 6;
     border-radius: 64px;
     border: 1px solid;
@@ -43,10 +32,27 @@
     min-height: 64px;
     min-width: 64px;
     max-width: 64px;
+    top: 1rem;
+    right: 1rem;
     float: right;
     margin: 0;
     padding: 0;
     clear: both;
+}
+
+.modalContent {
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    overflow-x: hidden;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    width: 100%;
+    height: 80%;
+    padding: 64px 0 0 0;
+    font-family: monospace;
 }
 
 @media only screen and (max-width: 650px) {

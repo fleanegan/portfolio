@@ -4,10 +4,28 @@
     <title>
         Mechanical Engineering</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--    <link type="text/css" href="./modalContent.css">-->
     <style>
+		.body{
+			position: absolute;
+			height: 100%;
+			max-width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-content: center;
+		}
+
+		.description{
+			display: inline;
+			width: 80%;
+			margin-left: 2rem;
+			overflow-wrap: break-word;
+			overflow: clip;
+		}
         .gallery {
+			position: relative;
             width: 40rem;
+			/*max-width: 650px;*/
             height: 60%;
             margin: 2rem;
             display: grid;
@@ -26,13 +44,22 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            display: flex;
         }
 
     </style>
 </head>
 <body>
+<div class="body">
 <h1>Mechanical Engineering test</h1>
+<div class="description">
+	I studied mechanical engineering at the University TU Dresden in Germany.
+	During the studies I discovered my interest for programming
+	and steadily specialised in the direction of industry 4.0.
+	On this page you can find my master thesis which is about force control
+	for an industrial machine. The developed software solution enables
+	the machine to "feel" obstacles and follow their contours.
+</div>
 <div class="gallery">
 	<div class="left-col">
 		<img src="./overall.png" alt="Overview of the hexapod">
@@ -42,6 +69,7 @@
 		<img src="./x_act.png" alt="Superposition of programmed direction and compensated way">
 		<img src="./full.png" alt="Tool on test geometry">
 	</div>
+</div>
 </div>
 </body>
 </html>

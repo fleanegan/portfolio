@@ -44,14 +44,14 @@ export class DetailedContentView {
 
     hide() {
         this.elements.forEach((element) => {
-            element.style.display = "none";
+            element.style.visibility = "hidden";
         });
         this.isHiddenFlag = true;
     }
 
     show() {
         this.elements.forEach((element) => {
-            element.style.display = "block";
+            element.style.visibility = "visible";
         });
         this.isHiddenFlag = false;
     }
@@ -61,7 +61,7 @@ export class DetailedContentView {
         let oldContent = document.getElementById("modalInnerHtml");
         if (oldContent)
             oldContent.remove();
-        let contentHolder = document.createElement("content");
+        let contentHolder = document.createElement("div");
         contentHolder.setAttribute("class", "modalContent");
         contentHolder.setAttribute("id", "modalInnerHtml");
         if (!modalBox)

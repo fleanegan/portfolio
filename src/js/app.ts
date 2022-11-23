@@ -3,7 +3,6 @@ import {DetailedContentView} from "./DetailedContentView";
 declare var require: any;
 require('../css/main.css');
 require('../css/modal.css');
-require('../css/modalContent.css');
 require('../html/legal.html');
 require('../../assets/contactCode.png');
 require('../../assets/arrow.png');
