@@ -11,6 +11,11 @@ require('../../assets/maschinenbau/only.png');
 require('../../assets/maschinenbau/overall.png');
 require('../../assets/maschinenbau/full.png');
 require('../../assets/maschinenbau/x_act.png');
+require('../../assets/bricolage/lampeEis.png');
+require('../../assets/bricolage/lampeImDunkeln.JPG');
+require('../../assets/bricolage/lampeParisFertig.jpg');
+require('../../assets/bricolage/mooslampeTotale.jpg');
+
 
 
 import Game from './Game';
