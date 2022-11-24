@@ -1,3 +1,4 @@
+import PDF from '../../assets/maschinenbau/Diplomarbeit.pdf';
 
 export class DetailedContentView {
     createBlurryOverlay() {
@@ -71,5 +72,9 @@ export class DetailedContentView {
             'beforeend',
             rawHTML
         );
+        const link = document.getElementById('pdfLink') as HTMLAnchorElement | null;
+        if (link !== null)
+            link.href = PDF;
+        else console.log("could not find link");
     }
 }

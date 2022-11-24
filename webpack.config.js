@@ -48,7 +48,7 @@ module.exports = {
                 type: 'asset/resource',
             },
             {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|svg|jpg|jpeg|gif|pdf)$/i,
                 exclude: /node_modules/,
                 type: 'asset/resource',
             },
@@ -56,7 +56,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html'
+            template: './src/html/index.html'
         })
     ],
 }
