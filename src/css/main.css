@@ -148,7 +148,7 @@ svg {
     }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 830px) {
     .content{
         width: 100%;
     }

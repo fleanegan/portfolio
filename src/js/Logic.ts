@@ -57,8 +57,8 @@ export class Logic {
         this.updateLocomotiveDirection(newDirection);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
             this.detailedContentView.show();
-            this.railInteractivityHandler.autopilotDestination = null;
-            this.locomotive.stop();
+            this.init(this.detailedContentView);
+            return;
         }
         this.locomotive.move();
         this.context.putImageData(this.getBackground(), 0, 0);
