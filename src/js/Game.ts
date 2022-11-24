@@ -45,19 +45,19 @@ export default class Game {
 
     addEventListeners(): void {
         this.canvas.addEventListener('pointerdown', (e) => {
-            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            const {x, y}: { x: number, y: number } = this.getMousePos(e);
             this.drawingState.pointerPosition.x = x;
             this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = true;
             this.logic.handlePointerDown(new Point(x, y));
-                const target = e.target as Element;
+            const target = e.target as Element;
             if (target.hasPointerCapture(e.pointerId)) {
                 target.releasePointerCapture(e.pointerId);
             }
         });
 
         this.canvas.addEventListener('pointerup', (e) => {
-            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            const {x, y}: { x: number, y: number } = this.getMousePos(e);
             this.drawingState.pointerPosition.x = x;
             this.drawingState.pointerPosition.y = y;
             this.drawingState.isPointerDown = false;
@@ -66,7 +66,7 @@ export default class Game {
         });
 
         this.canvas.addEventListener('pointermove', (e) => {
-            const {x, y}:{x: number, y: number} = this.getMousePos(e);
+            const {x, y}: { x: number, y: number } = this.getMousePos(e);
             this.drawingState.pointerPosition.x = x;
             this.drawingState.pointerPosition.y = y;
             if (this.drawingState.isPointerDown)
@@ -100,6 +100,16 @@ export default class Game {
         document.getElementById("forwardButton").addEventListener("contextmenu", function (e) {
             e.preventDefault();
         });
+
+        document.getElementById("forwardButton").addEventListener("pointerleave", () => {
+                this.drawingState.pressedKeys.delete("ForwardButton");
+            }
+        );
+
+        document.getElementById("forwardButton").addEventListener("touchcancel", () => {
+                this.drawingState.pressedKeys.delete("ForwardButton");
+            }
+        );
     }
 
     public render(): void {
@@ -114,7 +124,7 @@ export default class Game {
     }
 
 
-    private setUpClickable(HtmlId: string, rawHtmlModalContent: string){
+    private setUpClickable(HtmlId: string, rawHtmlModalContent: string) {
         const legalLink = document.getElementById(HtmlId);
         const self = this;
         legalLink.onclick = function () {
