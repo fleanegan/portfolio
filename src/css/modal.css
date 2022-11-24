@@ -4,6 +4,7 @@
 
 .modalBox {
     display: flex;
+    flex-direction: column;
     position: absolute;
     max-width: 80%;
     min-width: 60%;
@@ -20,8 +21,15 @@
     border: 1px solid #ddd
 }
 
+.modalButtonContainer {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 10%;
+}
+
 .modalCloseButton {
-    position: fixed;
+    position: sticky;
     display: block;
     z-index: 6;
     border-radius: 64px;

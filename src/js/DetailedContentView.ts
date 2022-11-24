@@ -13,17 +13,20 @@ export class DetailedContentView {
 
     createBox() {
         let modalBox = document.createElement("div");
-        modalBox.setAttribute("id", "ModalBox");
-        modalBox.setAttribute("class", "modalBox");
+        let buttonContainer = document.createElement("buttonContainer");
         let newcloseButton = document.createElement("button");
         let newContent = document.createTextNode("X");
         newcloseButton.appendChild(newContent);
         newcloseButton.id = "btn";
         newcloseButton.setAttribute("class", "modalCloseButton");
-        modalBox.appendChild(newcloseButton);
+        buttonContainer.appendChild(newcloseButton);
+        modalBox.appendChild(buttonContainer);
         newcloseButton.addEventListener("click", () => {
             this.hide();
         });
+        modalBox.setAttribute("id", "ModalBox");
+        modalBox.setAttribute("class", "modalBox");
+        buttonContainer.setAttribute("class", "modalButtonContainer");
         document.body.appendChild(modalBox);
         this.elements.push(modalBox);
     }

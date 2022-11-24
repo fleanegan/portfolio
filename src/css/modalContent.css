@@ -5,6 +5,7 @@
     align-content: center;
     height: 100%;
     max-width: 100%;
+    z-index: 4;
     display: flex;
 }
 

@@ -21,7 +21,7 @@ export class ContentPreview {
     constructor() {
         this.targets = [
             new ContentTile(new Point(Scaler.x(ContentTile.diameter / 4), Scaler.getHeight() - Scaler.y(ContentTile.diameter / 4)), iconBricolage, contentLampBuilding, ReferencePointMode.LowerLeft),
-            new ContentTile(new Point(Scaler.getWidth() / 2 - Scaler.x(ContentTile.diameter / 2), Scaler.y(ContentTile.diameter / 2)), iconInformatics, contentProgramming, ReferencePointMode.UpperRight),
+            new ContentTile(new Point(Scaler.getWidth() / 1.5 - Scaler.x(ContentTile.diameter / 2), Scaler.y(ContentTile.diameter / 2)), iconInformatics, contentProgramming, ReferencePointMode.UpperRight),
             new ContentTile(new Point(Scaler.getWidth() / 1.3 - Scaler.x(ContentTile.diameter / 2), Scaler.getHeight() * 0.5), iconMaschinenbau, contentMechanicalEngineering, ReferencePointMode.UpperLeft)];
     }
 
