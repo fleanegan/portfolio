@@ -11,6 +11,7 @@
 .description {
     display: block;
     width: 80%;
+    max-width: 40rem;
     margin-left: 2rem;
     overflow-wrap: break-word;
     text-align: justify;
@@ -19,8 +20,8 @@
 
 .gallery {
     position: relative;
-    width: 40rem;
-    max-width: available;
+    width: 80%;
+    max-width: 40rem;
     height: 60%;
     margin: 2rem;
     display: grid;

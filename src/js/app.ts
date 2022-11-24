@@ -14,7 +14,6 @@ require('../../assets/maschinenbau/x_act.png');
 
 
 import Game from './Game';
-import font from '../../fonts/Gidole-Regular.ttf'
 
 class App {
 	private _game: Game;

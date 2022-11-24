@@ -25,8 +25,6 @@ export class DetailedContentView {
             this.hide();
         });
         document.body.appendChild(modalBox);
-        modalBox.parentElement.style.display = "flex";
-        modalBox.parentElement.style.justifyContent = "center";
         this.elements.push(modalBox);
     }
 

@@ -21,7 +21,7 @@
 }
 
 .modalCloseButton {
-    position: absolute;
+    position: fixed;
     display: block;
     z-index: 6;
     border-radius: 64px;
