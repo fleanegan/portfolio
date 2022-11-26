@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Welcome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .welcomeBody{
+            position: static;
+            height: 80%;
+        }
+        .wtf{
+            position: absolute;
+            width: 90%;
+            height: 75%;
+            /*background-color: aqua;*/
+            display: block;
+            z-index: 4;
+        }
+
+        .helpContainer {
+            position: absolute;
+            margin: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            max-height: 100%;
+            max-width: 90%;
+        }
+
+        .helpItem {
+            padding: 1rem;
+            display: flex;
+            align-content: center;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+            min-height: 0;
+            max-width: 100%;
+            /*background-color: #dddddd;*/
+        }
+
+        .img {
+            display: block;
+            max-width: 25%;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            /*background-color: #364147;*/
+        }
+
+        .text{
+            margin-left: .75rem;
+            margin-right: 1rem;
+            /*background-color: #d62828;*/
+            text-align: justify;
+        }
+
+    </style>
+</head>
+<body class="welcomeBody">
+<h1 class="title">Welcome</h1>
+<div class="description">
+    This page is about me. Discover me by locomotive and see for yourself. Or as some call it: Train hard, play hard. Want some instructions?
+</div>
+<div class="wtf">
+<div class="helpContainer">
+    <div class="helpItem">
+        <img class="img" src="./helpContent.png">
+        <div class="text"><b>Clicking on this button</b><br>Will move the train to the icon and show additional information about me</div>
+    </div>
+    <div class="helpItem">
+        <img class="img" src="./helpButton.png">
+        <span class="text"><b>Pressing this button</b><br>Will make the locomotive move forward</span>
+    </div>
+    <div class="helpItem">
+        <img class="img" src="./helpBasePoints.png">
+        <span class="text"><b>Dragging these waypoints</b><br>Allows you to modify the tracks</span>
+    </div>
+</div>
+</div>
+</body>
+</html>

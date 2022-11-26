@@ -15,6 +15,9 @@ require('../../assets/bricolage/lampeEis.png');
 require('../../assets/bricolage/lampeImDunkeln.JPG');
 require('../../assets/bricolage/lampeParisFertig.jpg');
 require('../../assets/bricolage/mooslampeTotale.jpg');
+require('../../assets/welcome/helpContent.png');
+require('../../assets/welcome/helpButton.png');
+require('../../assets/welcome/helpBasePoints.png');
 
 
 

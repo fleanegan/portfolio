@@ -37,7 +37,7 @@ export class DetailedContentView {
     constructor() {
         this.createBlurryOverlay();
         this.createBox();
-        this.hide();
+        this.show();
     }
 
     isHidden(): boolean{
