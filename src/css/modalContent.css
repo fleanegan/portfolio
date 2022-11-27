@@ -24,7 +24,7 @@
 
 .gallery {
     position: relative;
-    max-width: 90%;
+    max-width: 40rem;
     display: grid;
     grid-template-columns: 2fr 3fr;
     grid-gap: 1.5rem;

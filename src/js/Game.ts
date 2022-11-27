@@ -36,8 +36,7 @@ export default class Game {
         this.context = this.canvas.getContext("2d");
         this.addEventListeners();
         this.detailedContentView = new DetailedContentView();
-        // this.detailedContentView.setContent(welcomePage);
-        this.detailedContentView.setContent(bricolagePage);
+        this.detailedContentView.setContent(welcomePage);
         this.logic = new Logic();
     }
 
