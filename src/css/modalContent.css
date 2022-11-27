@@ -12,7 +12,8 @@
     display: block;
     width: 80%;
     max-width: 40rem;
-    margin-left: 2rem;
+    padding-left: 2rem;
+    padding-bottom: 2rem;
     overflow-wrap: break-word;
     text-align: justify;
     overflow: clip;
