@@ -8,11 +8,14 @@
     z-index: 4;
 }
 
+.title{
+    max-width: 80%;
+}
+
 .description {
-    display: block;
-    width: 80%;
     max-width: 40rem;
-    padding-left: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     padding-bottom: 2rem;
     overflow-wrap: break-word;
     text-align: justify;
@@ -21,13 +24,11 @@
 
 .gallery {
     position: relative;
-    width: 80%;
-    max-width: 40rem;
-    height: 60%;
-    margin: 2rem;
+    max-width: 90%;
     display: grid;
     grid-template-columns: 2fr 3fr;
     grid-gap: 1.5rem;
+    padding-bottom: 2rem;
 }
 
 .gallery .left-col, .gallery .right-col {
@@ -50,15 +51,11 @@
     display: flex;
 }
 @media only screen and (max-width: 830px) {
-    .gallery{
+    .gallery {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-content: center;
-        width: 80%;
     }
 
-    .title{
-        margin-left: 1rem;
-    }
 }
