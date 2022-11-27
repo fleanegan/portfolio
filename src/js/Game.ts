@@ -7,6 +7,7 @@ import contactPage from "../html/contact.html"
 import welcomePage from "../html/welcome.html"
 import programmingPage from "../html/informatics.html"
 import maschinenbauPage from "../html/maschinenbau.html"
+import bricolagePage from "../html/bricolage.html"
 import {Direction} from "./Locomotive";
 
 type DrawingState = {
@@ -36,7 +37,7 @@ export default class Game {
         this.addEventListeners();
         this.detailedContentView = new DetailedContentView();
         // this.detailedContentView.setContent(welcomePage);
-        this.detailedContentView.setContent(maschinenbauPage);
+        this.detailedContentView.setContent(bricolagePage);
         this.logic = new Logic();
     }
 
