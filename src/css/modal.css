@@ -39,11 +39,9 @@
     min-height: 64px;
     min-width: 64px;
     max-width: 64px;
-    top: 1rem;
-    right: 1rem;
+    top: 0;
+    right: 0;
     float: right;
-    margin: 0;
-    padding: 0;
     clear: both;
 }
 
