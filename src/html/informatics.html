@@ -1,14 +1,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- HTML Codes by Quackit.com -->
     <title>
         Programming</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./modalContent.css">
+    <style>
+        .table {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: flex-start;
+        }
+
+        .tableContent {
+            width: 100%;
+            max-width: 50rem;
+            height: 100%;
+            margin: .2rem;
+            background-color: #ecedf0;
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+            border-radius: 3px;
+        }
+
+        .tableContentTitle {
+            border-radius: 3px;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            padding-left: .75rem;
+            padding-right: .75rem;
+            justify-content: center;
+            vertical-align: center;
+            margin-right: .75rem;
+            min-width: 4rem;
+            color: #dddddd;
+            height: 100%;
+        }
+
+        .tableContentDescription {
+            display: flex;
+            flex-direction: column;
+            text-align: justify;
+            padding-right: 1rem;
+            align-items: flex-start;
+            padding-top: .25rem;
+            padding-bottom: .25rem;
+            height: 100%;
+        }
+
+        .tableContentDescriptionParagraph {
+            margin-top: 0.1rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .tableContentRuler {
+            width: 100%;
+            text-align: left;
+            margin-left: 0;
+            color: #eeeeee;
+            height: 1px;
+        }
+
+    </style>
 </head>
-<body>
-<h1>Programming</h1>
-</body>
-</html>
+<body class="body">
+<h1 class="title">Programming</h1>
+<div class="description">
+    This is a test
+</div>
+<div class="table">
+    <div class="tableContent">
+        <div class="tableContentTitle" style="background-color: #eaa549; color: #000000;"><b>C</b></div>
+        <div class="tableContentDescription">
+            <p class="tableContentDescriptionParagraph"><b>Ft_Minishell</b></p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Subject: A minimal unix shell written from scratch. school
+                project of ecole 42, (Paris, France)</p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Benefits: Taught me how to parse complex user input. First
+                Xtreme programming project, 100% written with
+                pair programming and TDD. Working closely with the man-pages. Deepened my understanding of bash.</p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">
+                Access: <a href="https://github.com/fleanegan/minishell">Link to Github repository</a>
+            </p>
+        </div>
+    </div>
+    <div class="tableContent">
+        <div class="tableContentTitle" style="background-color: #ddd222; color: #000000;"><b>Python</b></div>
+        <div class="tableContentDescription">
+            <p class="tableContentDescriptionParagraph"><b>Routing Rlgorithm</b></p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Subject: Connecting Sensors on a variable grid without
+                generating short circuits during an internship at Footfalls and Heartbeats
+                Ltd. (Nottingham, England)</p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Benefits: Taught me how to acquire user needs and integrate
+                results in a scrum environment. International corporation. Exploring different mathematical
+                concepts for finding an optimal solution</p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">
+                Access: Closed source software
+            </p>
+        </div>
+    </div>
+    <div class="tableContent">
+        <div class="tableContentTitle" style="background-color: #426a79; color: #ffffff;"><b>C++</b></div>
+        <div class="tableContentDescription">
+            <p class="tableContentDescriptionParagraph"><b>Ft_Containers</b></p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Subject: Rewriting a subset of STL containers </p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">Benefits: Understanding C++ templates and applying them to an
+                object-oriented context. Using the GoogleTest library to do 100% TDD. Gave me a better understanding of
+                what data structure to choose depending on my needs.</p>
+            <hr class="tableContentRuler">
+            <p class="tableContentDescriptionParagraph">
+                Access: <a href="https://github.com/fleanegan/containers">Link to Github repository</a>
+            </p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

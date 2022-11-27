@@ -1,12 +1,11 @@
 .body {
-    position: absolute;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    height: 100%;
-    max-width: 100%;
-    z-index: 4;
-    display: flex;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*justify-content: flex-start;*/
+    /*align-content: center;*/
+    /*height: 100%;*/
+    /*max-width: 100%;*/
+    /*z-index: 4;*/
 }
 
 .description {

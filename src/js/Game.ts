@@ -5,6 +5,7 @@ import {DetailedContentView} from "./DetailedContentView";
 import legalPage from "../html/legal.html"
 import contactPage from "../html/contact.html"
 import welcomePage from "../html/welcome.html"
+import programmingPage from "../html/informatics.html"
 import {Direction} from "./Locomotive";
 
 type DrawingState = {
@@ -33,7 +34,8 @@ export default class Game {
         this.context = this.canvas.getContext("2d");
         this.addEventListeners();
         this.detailedContentView = new DetailedContentView();
-        this.detailedContentView.setContent(welcomePage);
+        // this.detailedContentView.setContent(welcomePage);
+        this.detailedContentView.setContent(programmingPage);
         this.logic = new Logic();
     }
 

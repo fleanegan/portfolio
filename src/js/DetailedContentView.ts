@@ -4,34 +4,20 @@ export class DetailedContentView {
     createBlurryOverlay() {
         let blur = document.createElement("div");
         blur.setAttribute("class", "blur");
+        blur.setAttribute("id", "modalBlur");
         document.body.appendChild(blur);
         blur.addEventListener("click", () => {
             this.hide();
         });
-        this.elements.push(blur);
     }
 
     createBox() {
-        let modalBox = document.createElement("div");
-        let buttonContainer = document.createElement("buttonContainer");
-        let newcloseButton = document.createElement("button");
-        let newContent = document.createTextNode("X");
-        newcloseButton.appendChild(newContent);
-        newcloseButton.id = "btn";
-        newcloseButton.setAttribute("class", "modalCloseButton");
-        buttonContainer.appendChild(newcloseButton);
-        modalBox.appendChild(buttonContainer);
-        newcloseButton.addEventListener("click", () => {
+        let modalCloseButton = document.getElementById("modalCloseButton");
+        modalCloseButton.addEventListener("click", () => {
             this.hide();
         });
-        modalBox.setAttribute("id", "ModalBox");
-        modalBox.setAttribute("class", "modalBox");
-        buttonContainer.setAttribute("class", "modalButtonContainer");
-        document.body.appendChild(modalBox);
-        this.elements.push(modalBox);
     }
 
-    private elements: HTMLElement[] = [];
     private isHiddenFlag: boolean;
 
     constructor() {
@@ -45,37 +31,33 @@ export class DetailedContentView {
     }
 
     hide() {
-        this.elements.forEach((element) => {
-            element.style.visibility = "hidden";
-        });
+        const modalBox = document.getElementById("modalBox");
+        const modalBlur = document.getElementById("modalBlur");
+        modalBox.style.visibility = "hidden";
+        modalBlur.style.visibility = "hidden";
         this.isHiddenFlag = true;
     }
 
     show() {
-        this.elements.forEach((element) => {
-            element.style.visibility = "visible";
-        });
+        const modalBox = document.getElementById("modalBox");
+        const modalBlur = document.getElementById("modalBlur");
+        modalBox.style.visibility = "visible";
+        modalBlur.style.visibility = "visible";
         this.isHiddenFlag = false;
     }
 
     setContent(rawHTML: string) {
-        const modalBox = document.getElementById("ModalBox");
+        const modalBox = document.getElementById("modalBox");
         let oldContent = document.getElementById("modalInnerHtml");
         if (oldContent)
             oldContent.remove();
         let contentHolder = document.createElement("div");
         contentHolder.setAttribute("class", "modalContent");
         contentHolder.setAttribute("id", "modalInnerHtml");
-        if (!modalBox)
-            throw new Error("could not find DOM");
         modalBox.appendChild(contentHolder);
-        contentHolder.insertAdjacentHTML(
-            'beforeend',
-            rawHTML
-        );
+        contentHolder.innerHTML = rawHTML;
         const link = document.getElementById('pdfLink') as HTMLAnchorElement | null;
         if (link !== null)
             link.href = PDF;
-        else console.log("could not find link");
     }
 }
