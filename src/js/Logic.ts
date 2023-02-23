@@ -6,6 +6,7 @@ import {DetailedContentView} from "./DetailedContentView";
 import {RailInteractivityHandler} from "./RailInteractivityHandler";
 import {ContentPreview} from "./ContentPreview";
 import {AnimationHandler} from "./AnimationHandler";
+import {DrawingState} from "./Game";
 
 export class Logic {
     private rails: Rails;
@@ -51,10 +52,10 @@ export class Logic {
         return this.background;
     }
 
-    process(newDirection: Direction) {
+    process(newDirection: Direction, drawingState: DrawingState) {
         if (this.detailedContentView.isHidden() == false)
             return;
-        this.updateLocomotiveDirection(newDirection);
+        this.updateLocomotiveDirection(newDirection, drawingState);
         if (this.locomotive.hasReachedDestination() && this.locomotive.direction == Direction.Auto) {
             this.detailedContentView.show();
             this.init(this.detailedContentView);
@@ -71,9 +72,15 @@ export class Logic {
             this.animationHandler.deactivateHelp();
     }
 
-    updateLocomotiveDirection(userInput: Direction) {
+    updateLocomotiveDirection(userInput: Direction, drawingState: DrawingState) {
         if (this.locomotive.autopilotDestinationAsProgress == null) {
-            this.locomotive.setDirection(userInput);
+            if (drawingState.isPointerDown
+                && !this.railInteractivityHandler.isPathDragged()
+                && !this.railInteractivityHandler.isNearTile(
+                    new Point(drawingState.pointerPosition.x, drawingState.pointerPosition.y)))
+                this.locomotive.setDirection(Direction.Forward)
+            else
+                this.locomotive.setDirection(userInput);
         } else
             this.locomotive.setDirection(Direction.Auto);
     }

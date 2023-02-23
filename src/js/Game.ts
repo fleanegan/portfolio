@@ -10,7 +10,7 @@ import maschinenbauPage from "../html/maschinenbau.html"
 import bricolagePage from "../html/bricolage.html"
 import {Direction} from "./Locomotive";
 
-type DrawingState = {
+export type DrawingState = {
     pointerPosition: { x: number; y: number };
     isPointerDown: boolean;
     pressedKeys: Set<string>;
@@ -125,7 +125,7 @@ export default class Game {
             userInput = Direction.Forward;
         else if (this.drawingState.pressedKeys.has('ArrowLeft'))
             userInput = Direction.Backwards;
-        this.logic.process(userInput);
+        this.logic.process(userInput, this.drawingState);
     }
 
 
