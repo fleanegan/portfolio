@@ -16,9 +16,11 @@ Npm run dev
 you can create a local server, running on port 8080. In order to match github page's nomenclature, the index lies at localhost:8080/portfolio/
 
 # Publishing a release
+```
 git switch <branch name configured in github pages>
 git merge main
 npx webpack --config=webpack.config.js
 git add dist -f
 git commit
 git subtree push --prefix dist origin <branch name configured in github pages>
+```
