@@ -1,0 +1,9 @@
+.idea/
+.parcel-cache/
+.swo
+.swp
+dist/
+fonts/
+node_modules/
+package-lock.json
+
